@@ -37,9 +37,16 @@
 ## Progress
 
 1. 'paust/pko-t5-base'
-   - [log](https://wandb.ai/dotsnangles/news-topic-keyphrase-generation-model-dev)
-   - 코사인 스케쥴러를 적용하여 30에폭 훈련 진행 중이나 15에폭 이후로 로스와 루즈 스코어가 모두 정체
-   - ROUGE1 기준으로 22를 넘기 어려울 것으로 보임
-   - 훈련을 끝까지 마친 뒤 Best CKPT의 추론 결과를 토대로 훈련 데이터 보완 혹은 설계 개선이 필요할 수 있음
-   - ainize/kobart-news 및 ainize/gpt-j-6B-float16를 훈련해 베이스라인을 잡을 예정
-   - ainize/kobart-news의 경우 요약 데이터로 훈련이 된 모델이라 타 모델과 비교해 높은 성능을 낼 가능성이 있음
+  - [log](https://wandb.ai/dotsnangles/news-topic-keyphrase-generation-model-dev)
+  - 코사인 스케쥴러를 적용하여 30에폭 훈련 진행 중이나 15에폭 이후로 로스와 루즈 스코어가 모두 정체
+  - ROUGE1 기준으로 22를 넘기 어려울 것으로 보임
+  - 훈련을 끝까지 마친 뒤 Best CKPT의 추론 결과를 토대로 훈련 데이터 보완 혹은 설계 개선이 필요할 수 있음
+  - ainize/kobart-news 및 ainize/gpt-j-6B-float16를 훈련해 베이스라인을 잡을 예정
+  - ainize/kobart-news의 경우 요약 데이터로 훈련이 된 모델이라 타 모델과 비교해 높은 성능을 낼 가능성이 있음
+  - 현재 데이터의 샘플 별 키프레이즈의 갯수가 크게 상이하여 최대 5개에서 10개 사이로 제한해 전처리한 뒤 훈련을 진행해볼 필요가 있음
+    - 토큰화 후 토큰 갯수가 2개부터 156개
+    - keyphrase 객체 수 기준으로는 아래와 같음 (3분위수 기준 7개)
+    - ![num_of_keyphrasespng](images/num_of_keyphrasespng.jpg)
+  - 보다 나은 품질의 v2 데이터에 키프레이즈 개체수를 7개로 제한하는 전처리 로직을 추가하여 훈련 예정
+    - paust/pko-t5 / ainize/kobart-news / ainize/gpt-j-6B-float16 세 개 모델을 모두 테스트한 뒤 베이스라인을 잡음
+2. 
