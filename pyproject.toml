@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "news-topic-keyphrase-generation-model-dev"
+version = "0.1.0"
+description = "생성 모델을 활용하여 신문기사의 토픽을 키프레이즈 생성 기법을 활용하여 추론합니다."
+authors = ["Jeonghyeon Park <dotsnangles@gmail.com>"]
+readme = "README.md"
+packages = [{include = "news-topic-keyphrase-generation-model-dev"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "^1.5.3"
+numpy = "^1.24.2"
+torch = "^1.13.1"
+transformers = "^4.26.1"
+dvc = {extras = ["ssh"], version = "^2.46.0"}
+wandb = "^0.13.11"
+simpletransformers = "^0.63.9"
+rouge-score = "^0.1.2"
+datasets = "^2.10.1"
+mypy = "^1.1.1"
+jupyterlab = "^3.6.3"
+ipywidgets = "^8.0.6"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
+pre-commit = "^3.1.1"
+mypy = "^1.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+check_untyped_defs="True"
+disallow_untyped_defs = true
+show_error_codes = true
+no_implicit_optional = true
+warn_return_any = true
+warn_unused_ignores = true
+exclude = ["data", "dataset", "outputs", "runs","wandb"]
+
+[tool.black]
+line-length = 88
