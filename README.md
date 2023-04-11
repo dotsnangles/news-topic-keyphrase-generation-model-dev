@@ -93,4 +93,17 @@
          1. Greedy Search 방식으로 어느 정도 정돈된 결과가 나온다면 빔서치나 샘플링 등의 제너레이션 기법을 적용해 결과를 확인해볼 수 있음
       5. 영자신문 샘플이 몇몇 존재하는데 한국어 샘플에 대해서만 훈련을 진행하고 결과를 살펴볼 필요가 있음
       6. 좀 더 실험을 진행해보고 결과가 미진할 경우 샘플을 1만건 정도 더 구축을 해보는 것도 방법일 듯함
-         1. 챗지피티 API를 통해 라벨링 자동화가 가능한지 확인해봐야 함
+         1. 챗지피티 API를 통해 라벨링 자동화가 가능한지 확인해봐야 함 (가능)
+
+
+### Generate more sample with GPT 3.5 Turbo
+
+1. openai api를 활용하여 1만건의 샘플을 추가로 생성합니다.
+  - 프롬프트 엔지니어링 결과 예시
+  - role: you are a data labeller who finds key-phrases in a news article.
+  - response: Sure, I can help you find key-phrases in a news article. Please provide me with the article, and I will analyze it to identify the most important and relevant phrases.
+  - prompt: find top 10 most important key-phrases in the article and separate the key-phrases with semi-colons; numbering is not needed; don't start or end it with any punctuation: NH농협은행, ‘농협이 곧 ESG’, 상생경영 시동건다 (...)
+  - reponse: NH농협은행; ESG경영; 환경·사회책임·지배구조; 금융사; 비재무적 노력; 대한민국 리딩금융 ESG 어워드; 농협이 곧 ESG; 녹색금융 상품; NH친환경기업우대론; NH녹색성장론; 최우수상
+2. 한국어 신문기사만 사용
+3. 결과적으로 GPT 3.5 Turbo 수준의 key-phrase 생성 모델 구축을 목표로 함
+4. DB에 축적된 신문기사 샘플을 살펴볼 필요
