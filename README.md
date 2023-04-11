@@ -36,6 +36,8 @@
 
 ## Progress
 
+### Test Training
+
 1. 'paust/pko-t5-base'
   - [log](https://wandb.ai/dotsnangles/news-topic-keyphrase-generation-model-dev)
   - 코사인 스케쥴러를 적용하여 30에폭 훈련 진행 중이나 15에폭 이후로 로스와 루즈 스코어가 모두 정체
@@ -49,4 +51,30 @@
     - ![num_of_keyphrasespng](images/num_of_keyphrasespng.jpg)
   - 보다 나은 품질의 v2 데이터에 키프레이즈 개체수를 7개로 제한하는 전처리 로직을 추가하여 훈련 예정
     - paust/pko-t5 / ainize/kobart-news / ainize/gpt-j-6B-float16 세 개 모델을 모두 테스트한 뒤 베이스라인을 잡음
-2. 
+
+### Baseline Set up
+
+1. Data
+  - news_topic_trainset2.json / news_topic_validset2.json
+  - 추후 추가될 수도 있는 데이터와 현재 데이터의 일관성을 유지하기 위해 v2만 사용
+    - GPT4로 라벨링한 데이터
+  - 총 1585개 샘플
+  - 현재 seperator는 ','
+  - 추가적인 라벨 정제를 수행함
+    - 앞뒤로 seperator가 붙어 있는 경우가 있어 삭제
+    - 이상값에 가까울 정도로 키프레이즈가 많은 라벨이 있어 키프레이즈의 갯수를 7개로 제한
+  - preprocess_v2.pickle
+  - input data의 max_len을 좀 더 확보하기 위해 prefix를 간소화 ("generate keyphrases: ")
+
+2. Model
+  - paust/pko-t5-base / ainize/kobart-news / ainize/gpt-j-6B-float16
+
+3. training args
+  - batch_size: 2
+  - learning_rate: 3e-6 * NGPU
+  - lr_scheduler: cosine without warm-up
+  - optimizer: adamw
+  - metric_for_best_model: eval_loss
+  - max_input_length: 512
+  - max_target_length: 128
+  - generation method for evaluation: greedy search
