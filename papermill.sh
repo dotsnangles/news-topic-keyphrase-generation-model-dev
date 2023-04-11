@@ -1,0 +1,1 @@
+papermill ./train.ipynb ./papermill/ainize_kobart_news_v2.ipynb
