@@ -38,7 +38,7 @@
 
 ### Test Training
 
-1. 'paust/pko-t5-base'
+- 'paust/pko-t5-base'
   - [log](https://wandb.ai/dotsnangles/news-topic-keyphrase-generation-model-dev)
   - 코사인 스케쥴러를 적용하여 30에폭 훈련 진행 중이나 15에폭 이후로 로스와 루즈 스코어가 모두 정체
   - ROUGE1 기준으로 22를 넘기 어려울 것으로 보임
@@ -52,9 +52,9 @@
   - 보다 나은 품질의 v2 데이터에 키프레이즈 개체수를 7개로 제한하는 전처리 로직을 추가하여 훈련 예정
     - paust/pko-t5 / ainize/kobart-news / ainize/gpt-j-6B-float16 세 개 모델을 모두 테스트한 뒤 베이스라인을 잡음
 
-### Baseline Set up
+#### Baseline Set up
 
-1. Data
+- Data
   - news_topic_trainset2.json / news_topic_validset2.json
   - 추후 추가될 수도 있는 데이터와 현재 데이터의 일관성을 유지하기 위해 v2만 사용
     - GPT4로 라벨링한 데이터
@@ -66,11 +66,11 @@
   - preprocess_v2.pickle
   - input data의 max_len을 좀 더 확보하기 위해 prefix를 간소화 ("generate keyphrases: ")
 
-2. Model
+- Model
   - paust/pko-t5-base / ainize/kobart-news / ainize/gpt-j-6B-float16
   - ainize/gpt-j-6B-float16는 훈련에 필요한 리소스가 큰 관계로 작은 모델로 실험을 선 진행
 
-3. training args
+- training args
   - batch_size: 2
   - learning_rate: 3e-6 * NGPU
   - lr_scheduler: cosine without warm-up
@@ -80,30 +80,42 @@
   - max_target_length: 128
   - generation method for evaluation: greedy search
 
-4. Results
-   1. ./results 참조
-   2. 시험 훈련에 비해 전반적으로 개선된 출력을 얻었으나 T5의 경우 BOS 토큰이 따로 없어 키프레이즈 구분자인 ','로 생성이 시작되는 경우가 종종 발견됨
-      1. T5 계열 모델의 경우 EOS토큰은 존재하기 때문에 이를 그냥 BOS로 사용해도 괜찮을 듯함
-   3. batch_size를 8로 에폭을 30으로 변경한 ainize_kobart_news_v2_run_2.txt의 결과가 보기에 가장 좋은 모습이었음
-   4. F1 스코어를 메트릭으로 사용하는 것은 좀 더 고려가 필요할 것으로 보임
-      1. 키프레이즈를 완전히 동일하지는 않더라도 비슷하게 생성하는 경우나 생성된 키프레이즈의 순서가 라벨의 순서와 다를 경우 모두 오답 처리하는 방식이기 때문에 문제가 있어보임
-      2. 현재 ROUGE 스코어는 유니그램 기준으로 20 내외를 기록하고 있음
-      3. 요약 태스크를 기준으로는 70 이상일 시 준수한 성능을 발휘하지만 키프레이즈 생성의 경우 스코어 기준을 좀 더 낮게 잡아도 결과가 괜찮을 듯함
-      4. Greedy Search 방식으로 ROUGE1을 35 이상으로 올릴 수 있는 방법을 찾아봐야 함
-         1. Greedy Search 방식으로 어느 정도 정돈된 결과가 나온다면 빔서치나 샘플링 등의 제너레이션 기법을 적용해 결과를 확인해볼 수 있음
-      5. 영자신문 샘플이 몇몇 존재하는데 한국어 샘플에 대해서만 훈련을 진행하고 결과를 살펴볼 필요가 있음
-      6. 좀 더 실험을 진행해보고 결과가 미진할 경우 샘플을 1만건 정도 더 구축을 해보는 것도 방법일 듯함
-         1. 챗지피티 API를 통해 라벨링 자동화가 가능한지 확인해봐야 함 (가능)
+- Results
+   - ./results 참조
+   - 시험 훈련에 비해 전반적으로 개선된 출력을 얻었으나 T5의 경우 BOS 토큰이 따로 없어 키프레이즈 구분자인 ','로 생성이 시작되는 경우가 종종 발견됨
+      - T5 계열 모델의 경우 EOS토큰은 존재하기 때문에 이를 그냥 BOS로 사용해도 괜찮을 듯함
+   - batch_size를 8로 에폭을 30으로 변경한 ainize_kobart_news_v2_run_2.txt의 결과가 보기에 가장 좋은 모습이었음
+   - F1 스코어를 메트릭으로 사용하는 것은 좀 더 고려가 필요할 것으로 보임
+      - 키프레이즈를 완전히 동일하지는 않더라도 비슷하게 생성하는 경우나 생성된 키프레이즈의 순서가 라벨의 순서와 다를 경우 모두 오답 처리하는 방식이기 때문에 문제가 있어보임
+      - 현재 ROUGE 스코어는 유니그램 기준으로 20 내외를 기록하고 있음
+      - 요약 태스크를 기준으로는 70 이상일 시 준수한 성능을 발휘하지만 키프레이즈 생성의 경우 스코어 기준을 좀 더 낮게 잡아도 결과가 괜찮을 듯함
+      - Greedy Search 방식으로 ROUGE1을 35 이상으로 올릴 수 있는 방법을 찾아봐야 함
+         - Greedy Search 방식으로 어느 정도 정돈된 결과가 나온다면 빔서치나 샘플링 등의 제너레이션 기법을 적용해 결과를 확인해볼 수 있음
+      - 영자신문 샘플이 몇몇 존재하는데 한국어 샘플에 대해서만 훈련을 진행하고 결과를 살펴볼 필요가 있음
+      - 좀 더 실험을 진행해보고 결과가 미진할 경우 샘플을 1만건 정도 더 구축을 해보는 것도 방법일 듯함
+         - 챗지피티 API를 통해 라벨링 자동화가 가능한지 확인해봐야 함 (가능)
 
 
 ### Generate more sample with GPT 3.5 Turbo
 
-1. openai api를 활용하여 1만건의 샘플을 추가로 생성합니다.
+- [link](https://github.com/illunex/keyphrase-data-labelling-with-openai-api)
+- openai api를 활용하여 1만건의 샘플을 추가로 생성합니다.
   - 프롬프트 엔지니어링 결과 예시
   - role: you are a data labeller who finds key-phrases in a news article.
   - response: Sure, I can help you find key-phrases in a news article. Please provide me with the article, and I will analyze it to identify the most important and relevant phrases.
   - prompt: find top 10 most important key-phrases in the article and separate the key-phrases with semi-colons; numbering is not needed; don't start or end it with any punctuation: NH농협은행, ‘농협이 곧 ESG’, 상생경영 시동건다 (...)
   - reponse: NH농협은행; ESG경영; 환경·사회책임·지배구조; 금융사; 비재무적 노력; 대한민국 리딩금융 ESG 어워드; 농협이 곧 ESG; 녹색금융 상품; NH친환경기업우대론; NH녹색성장론; 최우수상
-2. 한국어 신문기사만 사용
-3. 결과적으로 GPT 3.5 Turbo 수준의 key-phrase 생성 모델 구축을 목표로 함
-4. DB에 축적된 신문기사 샘플을 살펴볼 필요
+- 한국어 신문기사만 사용
+- 결과적으로 GPT 3.5 Turbo 수준의 key-phrase 생성 모델 구축을 목표로 함
+- DB에 축적된 신문기사 샘플을 살펴볼 필요
+
+### paust/pko-t5-base with Data V3 (11683 samples)
+
+- GPT 3.5 Turbo로 생성한 훈련 데이터 15000건 중 적합한 샘플 11683건을 훈련에 투입(train-eval ratio: 8:2)
+- 시험 훈련과 비교를 위해 paust/pko-t5-base를 사용
+- input_text의 토큰 길이는 500 이상 1000 미만으로 설정
+  - 일반적인 신문기사의 길이를 고려
+- output_text의 토큰 길이는 64 미만으로 설정
+  - 과도하게 긴 구절이 포함된 라벨이 생성된 샘플을 제외
+- papermill/paust_pko_t5_base_v3_run_1.ipynb
+- [log](https://wandb.ai/dotsnangles/news-topic-keyphrase-generation-model-dev/runs/nwoxtgfm?workspace=user-dotsnangles)
