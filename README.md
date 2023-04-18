@@ -117,5 +117,5 @@
   - 일반적인 신문기사의 길이를 고려
 - output_text의 토큰 길이는 64 미만으로 설정
   - 과도하게 긴 구절이 포함된 라벨이 생성된 샘플을 제외
-- papermill/paust_pko_t5_base_v3_run_1.ipynb
-- [log](https://wandb.ai/dotsnangles/news-topic-keyphrase-generation-model-dev/runs/nwoxtgfm?workspace=user-dotsnangles)
+- papermill/paust_pko_t5_base_v3_run_3.ipynb
+- [log](https://wandb.ai/dotsnangles/news-topic-keyphrase-generation-model-dev/runs/39kkpyli?workspace=user-dotsnangles)
