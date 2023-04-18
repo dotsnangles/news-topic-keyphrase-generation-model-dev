@@ -36,7 +36,7 @@ RUN pyenv global system
 ### run this command inside your workspace to launch a container
 # docker run -itd --gpus=all --volume=$(pwd):/workspace --shm-size=64gb --name=jeonghyeon jeonghyeon:1.0.0
 
-### in vsc command pallet
+### in vsc command palette
 # Dev Containers: Attach to Running Container
 
 ### useful commands
