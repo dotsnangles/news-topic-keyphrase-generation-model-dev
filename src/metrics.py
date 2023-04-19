@@ -41,3 +41,24 @@ def f1_score_at_k(label, prediction, k):
     f1_score = 2 * (precision * recall) / (precision + recall)
     
     return f1_score
+
+def jaccard_similarity(label, prediction, k):
+
+    # convert label and prediction strings to sets of key-phrases
+    label_lst = [key_phrase.strip() for key_phrase in label.split(';') if key_phrase != '']
+    label_lst = [key_phrase for key_phrase in label_lst if key_phrase != '']
+    print(label_lst)
+    
+    # split the predicted key-phrases and their scores
+    prediction_lst = [key_phrase.strip() for key_phrase in prediction.split(';') if key_phrase != '']
+    prediction_lst = [key_phrase for key_phrase in prediction_lst if key_phrase != ''][:k]
+    print(prediction_lst)
+
+    """Define Jaccard Similarity function for two sets"""
+    intersection = len(list(set(label_lst).intersection(prediction_lst)))
+    union = (len(label_lst) + len(prediction_lst)) - intersection
+
+    print(union)
+    print(intersection)
+
+    return float(intersection) / union
