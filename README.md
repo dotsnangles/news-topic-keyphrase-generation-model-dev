@@ -118,4 +118,28 @@
 - output_text의 토큰 길이는 64 미만으로 설정
   - 과도하게 긴 구절이 포함된 라벨이 생성된 샘플을 제외
 - papermill/paust_pko_t5_base_v3_run_3.ipynb
-- [log](https://wandb.ai/dotsnangles/news-topic-keyphrase-generation-model-dev/runs/39kkpyli?workspace=user-dotsnangles)
+- [log](https://wandb.ai/dotsnangles/news-topic-keyphrase-generation-model-dev?workspace=user-dotsnangles)
+
+#### retrospective after run_3
+
+- run_1과 run_2에서 개발 환경과 메트릭 함수의 오류가 있었음 (수정 후 run_3 진행)
+- [result](papermill/paust_pko_t5_base_v3_run_3.ipynb)
+- 15에폭 훈련을 진행했으며 마지막에도 training loss가 eval loss보다 높아 좀 더 긴 훈련을 진행해볼 필요가 있음
+- generation 시간이 오래 걸려 에폭마다 evaluation time이 긴 문제가 있었기 때문에 추후에는 eval loss를 모니터링하는 방식으로 훈련을 진행하고 best ckpt를 로드해 메트릭을 검증하는 쪽으로 가려고 함
+
+#### retrospective after run_5
+
+- Learning Rate와 Batch size를 환경에 맞춰 수정해 몇차례 시험 훈련을 추가로 진행
+   - data v3 run_5 >>> 3e-6 / 24 / linear scheduler wo warm-up / 30 epochs
+-  ROUGE 스코어 함수 수정 / F1@10 함수 정교화 / 자카드 유사도 함수 시험
+  - 'test_rouge1': 65.7355,
+  - 'test_rouge2': 45.4681,
+  - 'test_rougeL': 54.0561,
+  - 'test_rougeLsum': 54.0561,
+  - 'test_gen_len': 5009.4138,
+  - 'test_F1@10': 59.7773,
+  - 'test_jaccard_similarity': 26.0938,
+    - 유사한 키워드를 정답 처리하는 방식으로 함수를 수정
+- Jaccard Similarity는 F1@K에 개념이 포함되어 있으며 유사한 키워드를 정답 처리하는 식으로 사용하기 어려움에 따라 참고용으로 사용
+- 메트릭 함수를 조금 더 확실하게 검토한 뒤 훈련 데이터를 늘려 학습을 진행할 예정
+- [추론 결과 링크 최하단 Generate 부분 참조](papermill/paust_pko_t5_base_v3_run_5.ipynb)
