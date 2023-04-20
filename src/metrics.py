@@ -1,4 +1,4 @@
-def f1_score_at_k(label, prediction, k):
+def f1_score_at_k_for_sample(label, prediction, k):
     true_positives = 0
     false_positives = 0
     false_negatives = 0
@@ -7,14 +7,11 @@ def f1_score_at_k(label, prediction, k):
     label_lst = [key_phrase.strip() for key_phrase in label.split(';') if key_phrase != '']
     label_lst = [key_phrase for key_phrase in label_lst if key_phrase != '']
     label_set = set(label_lst)
-    print(f'label_set: {label_set}')
     
     # split the predicted key-phrases and their scores
     prediction_lst = [key_phrase.strip() for key_phrase in prediction.split(';') if key_phrase != '']
     prediction_lst = [key_phrase for key_phrase in prediction_lst if key_phrase != ''][:k]
     prediction_set = set(prediction_lst)
-    # prediction_set = set(p[0] for p in predictions[:k])
-    print(f'prediction_set: {prediction_set}')
     
     # calculate true positives, false positives, and false negatives
     for keyphrase in prediction_set:
@@ -26,10 +23,6 @@ def f1_score_at_k(label, prediction, k):
     for keyphrase in label_set:
         if keyphrase not in prediction_set:
             false_negatives += 1
-    
-    print(f'true_positives: {true_positives}')    
-    print(f'false_positives: {false_positives}')
-    print(f'false_negatives: {false_negatives}')
 
     # calculate precision, recall, and F1 score
     precision = true_positives / (true_positives + false_positives)
@@ -42,23 +35,36 @@ def f1_score_at_k(label, prediction, k):
     
     return f1_score
 
-def jaccard_similarity(label, prediction, k):
+def f1_score_at_k_for_batch(labels, predictions, k):
+    f1_scores =[]
+
+    for label, prediction in zip(labels, predictions):
+        f1_scores.append(f1_score_at_k_for_sample(label, prediction, k))
+
+    print(f1_scores)
+    return sum(f1_scores) / len(f1_scores)
+
+def jaccard_similarity_for_sample(label, prediction, k):
 
     # convert label and prediction strings to sets of key-phrases
     label_lst = [key_phrase.strip() for key_phrase in label.split(';') if key_phrase != '']
     label_lst = [key_phrase for key_phrase in label_lst if key_phrase != '']
-    print(label_lst)
     
     # split the predicted key-phrases and their scores
     prediction_lst = [key_phrase.strip() for key_phrase in prediction.split(';') if key_phrase != '']
     prediction_lst = [key_phrase for key_phrase in prediction_lst if key_phrase != ''][:k]
-    print(prediction_lst)
 
     """Define Jaccard Similarity function for two sets"""
     intersection = len(list(set(label_lst).intersection(prediction_lst)))
     union = (len(label_lst) + len(prediction_lst)) - intersection
 
-    print(union)
-    print(intersection)
-
     return float(intersection) / union
+
+def jaccard_similarity_for_batch(labels, predictions, k):
+    jaccard_similarities =[]
+
+    for label, prediction in zip(labels, predictions):
+        jaccard_similarities.append(jaccard_similarity_for_sample(label, prediction, k))
+
+    print(jaccard_similarities)
+    return sum(jaccard_similarities) / len(jaccard_similarities)
