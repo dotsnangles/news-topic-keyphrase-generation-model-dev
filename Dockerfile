@@ -10,6 +10,8 @@ RUN apt-get update -y && apt-get install -y \
     make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
     libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev \
     liblzma-dev python-openssl git vim less python3-venv
+RUN apt-get install -y \
+    g++ openjdk-8-jdk
 RUN apt install locales && locale-gen en_US.UTF-8 && dpkg-reconfigure locales
 
 ENV HOME /root
