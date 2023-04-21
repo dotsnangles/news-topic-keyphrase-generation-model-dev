@@ -88,7 +88,6 @@ def f1_score_at_k_for_batch(labels, predictions, k):
     for label, prediction in zip(labels, predictions):
         f1_scores.append(f1_score_at_k_for_sample(label, prediction, k))
 
-    print(f1_scores)
     return sum(f1_scores) / len(f1_scores)
 
 
@@ -120,5 +119,4 @@ def jaccard_similarity_for_batch(labels, predictions, k):
     for label, prediction in zip(labels, predictions):
         jaccard_similarities.append(jaccard_similarity_for_sample(label, prediction, k))
 
-    print(jaccard_similarities)
     return sum(jaccard_similarities) / len(jaccard_similarities)
