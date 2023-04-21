@@ -26,7 +26,7 @@
   - V1: chatgpt 프롬프트 엔지니어링으로 생성한 라벨을 작업자가 검수한 데이터 셋
   - V2: gpt4 프롬프트 엔지니어링으로 생성한 라벨 (v1에 비해 향상된 라벨 품질)
 - V3
-  - [link](#generate-more-samples-with-gpt-3.5-turbo)
+  - [link](#generate-more-samples-with-gpt-35-turbo)
 
 
 ## Metric
