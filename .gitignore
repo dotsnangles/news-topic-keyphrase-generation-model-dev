@@ -1,6 +1,7 @@
 __pycache__
 .venv
 .log
+.temp
 data
 wandb
 news_topic_extract-main
