@@ -5,33 +5,36 @@
 
 - 디코더 혹은 인코더-디코더 계열의 모델을 활용하여 신문기사를 입력으로 받아 토픽에 해당하는 key-phase를 생성하는 모델을 개발합니다.
 - 모델 입출력 예시
-  - 입력: 다음 달부터 15억 초과 주택 대출 허용…ltv 50%도 다음 달부터는 무주택자의 경우 규제 지역에서도 주택담보대출비율(ltv)이 (...)
-  - 출력: 주택담보대출,ltv 규제 완화,dsr
-- 한국어로 사전학습된 SBERT를 활용하여 KeyBERT 방법을 추가로 시험해볼 예정
-  - [link to ref.](https://github.com/MaartenGr/KeyBERT)
+  - 입력: NH농협은행, ‘농협이 곧 ESG’, 상생경영 시동건다 (...)
+  - 출력: NH농협은행; ESG경영; 환경·사회책임·지배구조; 금융사; 비재무적 노력; 대한민국 리딩금융 ESG 어워드; 농협이 곧 ESG; 녹색금융 상품; NH친환경기업우대론; NH녹색성장론; 최우수상
+<!-- - 한국어로 사전학습된 SBERT를 활용하여 KeyBERT 방법을 추가로 시험해볼 예정
+  - [link to ref.](https://github.com/MaartenGr/KeyBERT) -->
 
 
 ## Model
 
-- T5/GPT/BART 계열의 모델을 사용합니다.
-- 본질적으로 요약 태스크에 준하는 경우이기 때문에 한국어 데이터를 활용해 신문기사 요약 학습이 되어 있는 모델을 추가로 탐색할 예정입니다.
+- T5/GPT/BART 계열의 PLM 모델을 사용합니다.
+- 주요 PLM: paust/pko-t5-base
+<!-- - 본질적으로 요약 태스크에 준하는 경우이기 때문에 한국어 데이터를 활용해 신문기사 요약 학습이 되어 있는 모델을 추가로 탐색할 예정입니다. -->
 
 
 ## Data
 
 - 웹크롤링을 통해 얻은 신문기사 제목과 본문(x)에 대하여 챗피티를 활용하여 토픽에 해당하는 key-phrase 라벨(y)을 생성하는 방식으로 구축된 데이터세트입니다.
-- 현재 v1과 v2가 존재하며 시험 훈련에서는 2513개의 전체 샘플을 활용합니다.
-  - v1: chatgpt 프롬프트 엔지니어링으로 생성한 라벨을 작업자가 검수한 데이터 셋
-  - v2: gpt4 프롬프트 엔지니어링으로 생성한 라벨 (v1에 비해 향상된 라벨 품질)
-- train/eval 데이터는 초기 훈련에서 전체 데이터를 8:2로 나눠서 사용합니다.
+- train/eval 데이터의 비율은 8:2로 합니다.
+- V1 / V2
+  - V1: chatgpt 프롬프트 엔지니어링으로 생성한 라벨을 작업자가 검수한 데이터 셋
+  - V2: gpt4 프롬프트 엔지니어링으로 생성한 라벨 (v1에 비해 향상된 라벨 품질)
+- V3
+  - [link](#generate-more-samples-with-gpt-3.5-turbo)
 
 
 ## Metric
 
-- 시험 훈련에서는 Eval Loss를 기준으로 오버피팅 전에 얼리 스타핑하여 휴먼 이밸류에이션을 진행합니다.
-  - 개발 모델이 생성하는 key-pharase가 훈련 데이터에 준하게 생성이 되는지 확인합니다.\
-- 추후에는 F1 스코어 계산 함수를 작성하여 모델 개발에 활용합니다.'
-  - [link to ref.](https://huggingface.co/ml6team/keyphrase-generation-t5-small-inspec?text=In+this+work%2C+we+explore+how+to+learn+task+specific+language+models+aimed+towards+learning+rich+representation+of+keyphrases+from+text+documents.+We+experiment+with+different+masking+strategies+for+pre-training+transformer+language+models+%28LMs%29+in+discriminative+as+well+as+generative+settings.+In+the+discriminative+setting%2C+we+introduce+a+new+pre-training+objective+-+Keyphrase+Boundary+Infilling+with+Replacement+%28KBIR%29%2C+showing+large+gains+in+performance+%28up+to+9.26+points+in+F1%29+over+SOTA%2C+when+LM+pre-trained+using+KBIR+is+fine-tuned+for+the+task+of+keyphrase+extraction.+In+the+generative+setting%2C+we+introduce+a+new+pre-training+setup+for+BART+-+KeyBART%2C+that+reproduces+the+keyphrases+related+to+the+input+text+in+the+CatSeq+format%2C+instead+of+the+denoised+original+input.+This+also+led+to+gains+in+performance+%28up+to+4.33+points+inF1%40M%29+over+SOTA+for+keyphrase+generation.+Additionally%2C+we+also+fine-tune+the+pre-trained+language+models+on+named+entity+recognition%28NER%29%2C+question+answering+%28QA%29%2C+relation+extraction+%28RE%29%2C+abstractive+summarization+and+achieve+comparable+performance+with+that+of+the+SOTA%2C+showing+that+learning+rich+representation+of+keyphrases+is+indeed+beneficial+for+many+other+fundamental+NLP+tasks.)
+- Eval Loss를 기준으로 Best CKPT를 생성합니다.
+  - 개발 모델이 생성하는 key-pharase가 훈련 데이터에 준하게 생성이 되는지 확인합니다.
+- F1@K와 ROUGE 계산 함수를 작성하여 모델 개발에 활용합니다.
+  - [link to F1@K ref.](https://huggingface.co/ml6team/keyphrase-generation-t5-small-inspec?text=In+this+work%2C+we+explore+how+to+learn+task+specific+language+models+aimed+towards+learning+rich+representation+of+keyphrases+from+text+documents.+We+experiment+with+different+masking+strategies+for+pre-training+transformer+language+models+%28LMs%29+in+discriminative+as+well+as+generative+settings.+In+the+discriminative+setting%2C+we+introduce+a+new+pre-training+objective+-+Keyphrase+Boundary+Infilling+with+Replacement+%28KBIR%29%2C+showing+large+gains+in+performance+%28up+to+9.26+points+in+F1%29+over+SOTA%2C+when+LM+pre-trained+using+KBIR+is+fine-tuned+for+the+task+of+keyphrase+extraction.+In+the+generative+setting%2C+we+introduce+a+new+pre-training+setup+for+BART+-+KeyBART%2C+that+reproduces+the+keyphrases+related+to+the+input+text+in+the+CatSeq+format%2C+instead+of+the+denoised+original+input.+This+also+led+to+gains+in+performance+%28up+to+4.33+points+inF1%40M%29+over+SOTA+for+keyphrase+generation.+Additionally%2C+we+also+fine-tune+the+pre-trained+language+models+on+named+entity+recognition%28NER%29%2C+question+answering+%28QA%29%2C+relation+extraction+%28RE%29%2C+abstractive+summarization+and+achieve+comparable+performance+with+that+of+the+SOTA%2C+showing+that+learning+rich+representation+of+keyphrases+is+indeed+beneficial+for+many+other+fundamental+NLP+tasks.)
 
 
 ## Progress
@@ -47,19 +50,19 @@
   - ainize/kobart-news의 경우 요약 데이터로 훈련이 된 모델이라 타 모델과 비교해 높은 성능을 낼 가능성이 있음
   - 현재 데이터의 샘플 별 키프레이즈의 갯수가 크게 상이하여 최대 5개에서 10개 사이로 제한해 전처리한 뒤 훈련을 진행해볼 필요가 있음
     - 토큰화 후 토큰 갯수가 2개부터 156개
-    - keyphrase 객체 수 기준으로는 아래와 같음 (3분위수 기준 7개)
-    - ![num_of_keyphrasespng](images/num_of_keyphrasespng.jpg)
+    - keyphrase 객체수 분포 3분위수 기준 7개
+    <!-- - ![num_of_keyphrasespng](images/num_of_keyphrasespng.jpg) -->
   - 보다 나은 품질의 v2 데이터에 키프레이즈 개체수를 7개로 제한하는 전처리 로직을 추가하여 훈련 예정
     - paust/pko-t5 / ainize/kobart-news / ainize/gpt-j-6B-float16 세 개 모델을 모두 테스트한 뒤 베이스라인을 잡음
 
-#### Baseline Set up
+#### retrospective after test training
 
 - Data
   - news_topic_trainset2.json / news_topic_validset2.json
   - 추후 추가될 수도 있는 데이터와 현재 데이터의 일관성을 유지하기 위해 v2만 사용
     - GPT4로 라벨링한 데이터
   - 총 1585개 샘플
-  - 현재 seperator는 ','
+  - seperator는 ','
   - 추가적인 라벨 정제를 수행함
     - 앞뒤로 seperator가 붙어 있는 경우가 있어 삭제
     - 이상값에 가까울 정도로 키프레이즈가 많은 라벨이 있어 키프레이즈의 갯수를 7개로 제한
@@ -81,7 +84,7 @@
   - generation method for evaluation: greedy search
 
 - Results
-   - ./results 참조
+   - papermill/.old 참조
    - 시험 훈련에 비해 전반적으로 개선된 출력을 얻었으나 T5의 경우 BOS 토큰이 따로 없어 키프레이즈 구분자인 ','로 생성이 시작되는 경우가 종종 발견됨
       - T5 계열 모델의 경우 EOS토큰은 존재하기 때문에 이를 그냥 BOS로 사용해도 괜찮을 듯함
    - batch_size를 8로 에폭을 30으로 변경한 ainize_kobart_news_v2_run_2.txt의 결과가 보기에 가장 좋은 모습이었음
@@ -96,7 +99,7 @@
          - 챗지피티 API를 통해 라벨링 자동화가 가능한지 확인해봐야 함 (가능)
 
 
-### Generate more sample with GPT 3.5 Turbo
+### Generate more samples with GPT 3.5 Turbo
 
 - [link](https://github.com/illunex/keyphrase-data-labelling-with-openai-api)
 - openai api를 활용하여 1만건의 샘플을 추가로 생성합니다.
@@ -107,7 +110,7 @@
   - reponse: NH농협은행; ESG경영; 환경·사회책임·지배구조; 금융사; 비재무적 노력; 대한민국 리딩금융 ESG 어워드; 농협이 곧 ESG; 녹색금융 상품; NH친환경기업우대론; NH녹색성장론; 최우수상
 - 한국어 신문기사만 사용
 - 결과적으로 GPT 3.5 Turbo 수준의 key-phrase 생성 모델 구축을 목표로 함
-- DB에 축적된 신문기사 샘플을 살펴볼 필요
+<!-- - DB에 축적된 신문기사 샘플을 살펴볼 필요 -->
 
 ### paust/pko-t5-base with Data V3 (11683 samples)
 
@@ -122,7 +125,8 @@
 
 #### retrospective after run_3
 
-- run_1과 run_2에서 개발 환경과 메트릭 함수의 오류가 있었음 (수정 후 run_3 진행)
+- run_1과 run_2에서 개발 환경과 메트릭 함수의 작동상 오류가 있었음
+- 수정 후 run_3 진행
 - [result](papermill/paust_pko_t5_base_v3_run_3.ipynb)
 - 15에폭 훈련을 진행했으며 마지막에도 training loss가 eval loss보다 높아 좀 더 긴 훈련을 진행해볼 필요가 있음
 - generation 시간이 오래 걸려 에폭마다 evaluation time이 긴 문제가 있었기 때문에 추후에는 eval loss를 모니터링하는 방식으로 훈련을 진행하고 best ckpt를 로드해 메트릭을 검증하는 쪽으로 가려고 함
@@ -132,14 +136,14 @@
 - Learning Rate와 Batch size를 환경에 맞춰 수정해 몇차례 시험 훈련을 추가로 진행
    - data v3 run_5 >>> 3e-6 / 24 / linear scheduler wo warm-up / 30 epochs
 -  ROUGE 스코어 함수 수정 / F1@10 함수 정교화 / 자카드 유사도 함수 시험
-  - 'test_rouge1': 65.7355,
-  - 'test_rouge2': 45.4681,
-  - 'test_rougeL': 54.0561,
-  - 'test_rougeLsum': 54.0561,
-  - 'test_gen_len': 5009.4138,
-  - 'test_F1@10': 59.7773,
-  - 'test_jaccard_similarity': 26.0938,
-    - 유사한 키워드를 정답 처리하는 방식으로 함수를 수정
+   - F1@10함수를 유사한 키워드는 정답 처리하는 방식으로 수정
+   - 'test_rouge1': 65.7355,
+   - 'test_rouge2': 45.4681,
+   - 'test_rougeL': 54.0561,
+   - 'test_rougeLsum': 54.0561,
+   - 'test_gen_len': 5009.4138,
+   - 'test_F1@10': 59.7773,
+   - 'test_jaccard_similarity': 26.0938,
 - Jaccard Similarity는 F1@K에 개념이 포함되어 있으며 유사한 키워드를 정답 처리하는 식으로 사용하기 어려움에 따라 참고용으로 사용
 - 메트릭 함수를 조금 더 확실하게 검토한 뒤 훈련 데이터를 늘려 학습을 진행할 예정
 - [추론 결과 링크 최하단 Generate 부분 참조](papermill/paust_pko_t5_base_v3_run_5.ipynb)
