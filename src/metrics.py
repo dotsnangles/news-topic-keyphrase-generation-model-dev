@@ -33,13 +33,11 @@ def f1_score_at_k_for_sample(label_str, prediction_str, k):
     false_positives = 0
     false_negatives = 0
 
-    # convert label and prediction strings to sets of key-phrases
     label_lst = [
         key_phrase.strip() for key_phrase in label_str.split(";") if key_phrase != ""
     ]
     label_lst = [key_phrase for key_phrase in label_lst if key_phrase != ""]
 
-    # split the predicted key-phrases and their scores
     prediction_lst = [
         key_phrase.strip()
         for key_phrase in prediction_str.split(";")
@@ -49,7 +47,6 @@ def f1_score_at_k_for_sample(label_str, prediction_str, k):
         :k
     ]
 
-    # calculate true positives, false positives, and false negatives
     for keyphrase in prediction_lst:
         similarity = False
         for label in label_lst:
@@ -92,13 +89,11 @@ def f1_score_at_k_for_batch(labels, predictions, k):
 
 
 def jaccard_similarity_for_sample(label, prediction, k):
-    # convert label and prediction strings to sets of key-phrases
     label_lst = [
         key_phrase.strip() for key_phrase in label.split(";") if key_phrase != ""
     ]
     label_lst = [key_phrase for key_phrase in label_lst if key_phrase != ""]
 
-    # split the predicted key-phrases and their scores
     prediction_lst = [
         key_phrase.strip() for key_phrase in prediction.split(";") if key_phrase != ""
     ]
