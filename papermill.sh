@@ -1,1 +1,1 @@
-papermill ./train_seq2seq_plm.ipynb ./papermill/paust_pko_t5_base_v3_run_6_adafactor.ipynb
+papermill ./train_seq2seq_plm.ipynb ./papermill/paust_pko_t5_base_v3_run_7_adafactor_lora.ipynb
