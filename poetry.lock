@@ -13,6 +13,35 @@ files = [
 ]
 
 [[package]]
+name = "accelerate"
+version = "0.18.0"
+description = "Accelerate"
+category = "main"
+optional = false
+python-versions = ">=3.7.0"
+files = [
+    {file = "accelerate-0.18.0-py3-none-any.whl", hash = "sha256:41a84ac94407d7dcf030caf0cdadc70496594aec27ea680207bdb15b95f8a602"},
+    {file = "accelerate-0.18.0.tar.gz", hash = "sha256:1dd36fd972de4a6d0cffe5e4d6d30622fd853765f773b5582cf0796deefe1016"},
+]
+
+[package.dependencies]
+numpy = ">=1.17"
+packaging = ">=20.0"
+psutil = "*"
+pyyaml = "*"
+torch = ">=1.4.0"
+
+[package.extras]
+dev = ["black (>=23.1,<24.0)", "datasets", "deepspeed", "evaluate", "hf-doc-builder (>=0.3.0)", "parameterized", "pytest", "pytest-subtests", "pytest-xdist", "rich", "ruff (>=0.0.241)", "scikit-learn", "scipy", "tqdm", "transformers"]
+quality = ["black (>=23.1,<24.0)", "hf-doc-builder (>=0.3.0)", "ruff (>=0.0.241)"]
+rich = ["rich"]
+sagemaker = ["sagemaker"]
+test-dev = ["datasets", "deepspeed", "evaluate", "scikit-learn", "scipy", "tqdm", "transformers"]
+test-prod = ["parameterized", "pytest", "pytest-subtests", "pytest-xdist"]
+test-trackers = ["comet-ml", "tensorboard", "wandb"]
+testing = ["datasets", "deepspeed", "evaluate", "parameterized", "pytest", "pytest-subtests", "pytest-xdist", "scikit-learn", "scipy", "tqdm", "transformers"]
+
+[[package]]
 name = "aiofiles"
 version = "22.1.0"
 description = "File support for asyncio."
@@ -2815,6 +2844,32 @@ files = [
 ]
 
 [[package]]
+name = "peft"
+version = "0.2.0"
+description = "Parameter-Efficient Fine-Tuning (PEFT)"
+category = "main"
+optional = false
+python-versions = ">=3.7.0"
+files = [
+    {file = "peft-0.2.0-py3-none-any.whl", hash = "sha256:308657f88806681fe503b9554dc8a8e419b7049b461bceadbd4eece6e784cff2"},
+    {file = "peft-0.2.0.tar.gz", hash = "sha256:ce33f484c7038190705b69e4d2289230c7c1819c1084781483ac8e118f0a71af"},
+]
+
+[package.dependencies]
+accelerate = "*"
+numpy = ">=1.17"
+packaging = ">=20.0"
+psutil = "*"
+pyyaml = "*"
+torch = ">=1.13.0"
+transformers = "*"
+
+[package.extras]
+dev = ["black (>=22.0,<23.0)", "hf-doc-builder", "ruff (>=0.0.241)"]
+docs-specific = ["hf-doc-builder"]
+quality = ["black (>=22.0,<23.0)", "ruff (>=0.0.241)"]
+
+[[package]]
 name = "pexpect"
 version = "4.8.0"
 description = "Pexpect allows easy control of interactive console applications."
@@ -4585,4 +4640,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "664f7c7d796986c7e05e5ad1f43f9f859abda3f1eea2973f7c0d37f30d5bfdb7"
+content-hash = "1bfc552bab73677ef306726496ffe0710dbbd3c82ac6293dd595809ba263dad1"
