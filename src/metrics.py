@@ -1,5 +1,6 @@
 import evaluate
 from konlpy.tag import Komoran
+from tqdm import tqdm
 
 komoran = Komoran()
 rouge = evaluate.load("rouge")
@@ -14,7 +15,7 @@ def rouge_for_sampale(label, prediction):
 def rouge_for_batch(labels, predictions):
     rouge_scores = None
 
-    for label, prediction in zip(labels, predictions):
+    for label, prediction in zip(tqdm(labels), predictions):
         if rouge_scores == None:
             rouge_scores = rouge_for_sampale(label, prediction)
         else:
@@ -68,8 +69,11 @@ def f1_score_at_k_for_sample(label_str, prediction_str, k):
             false_negatives += 1
 
     # calculate precision, recall, and F1 score
-    precision = true_positives / (true_positives + false_positives)
-    recall = true_positives / (true_positives + false_negatives)
+    try:
+        precision = true_positives / (true_positives + false_positives)
+        recall = true_positives / (true_positives + false_negatives)
+    except ZeroDivisionError:
+        return 0
 
     if precision == 0 or recall == 0:
         return 0
@@ -82,7 +86,7 @@ def f1_score_at_k_for_sample(label_str, prediction_str, k):
 def f1_score_at_k_for_batch(labels, predictions, k):
     f1_scores = []
 
-    for label, prediction in zip(labels, predictions):
+    for label, prediction in zip(tqdm(labels), predictions):
         f1_scores.append(f1_score_at_k_for_sample(label, prediction, k))
 
     return sum(f1_scores) / len(f1_scores)
@@ -111,7 +115,7 @@ def jaccard_similarity_for_sample(label, prediction, k):
 def jaccard_similarity_for_batch(labels, predictions, k):
     jaccard_similarities = []
 
-    for label, prediction in zip(labels, predictions):
+    for label, prediction in zip(tqdm(labels), predictions):
         jaccard_similarities.append(jaccard_similarity_for_sample(label, prediction, k))
 
     return sum(jaccard_similarities) / len(jaccard_similarities)
