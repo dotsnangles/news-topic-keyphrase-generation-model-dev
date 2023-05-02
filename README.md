@@ -161,3 +161,18 @@
     - 실제 모델을 사용하는 과정에서 특정 범주의 핵심어 추출 성능이 떨어진다면 추가 데이터를 확보해 후속 훈련을 진행하며 유지 및 보수할 예정
 - 효율적인 훈련을 위해 LoRA(PEFT) 및 adafactor를 시험해볼 예정
   - 기본적으로는 현재까지 사용한 AdamW without LoRA를 유지
+
+### paust/pko-t5-base with Data V4 (11683 samples) (ZeRO)
+
+- 추가 라벨링을 실시한 dataset v4를 활용한 훈련
+- train/eval sample ratio: 76472:3000
+- ZeRO 기법 시험 및 적용
+  - Stage 2/3 and CPU Off-load 시험 예정 (추후 LLM 운영 대비)
+  - ZeRO의 경우 Adam/AdamW에 최적화되어 있기에 AdamW 사용
+- paust/pko-t5-base와 EleutherAI/polyglot-ko-5.8b로 베이스라인 설정
+- 정의한 metrics를 통해 사전 검증 후 휴먼 이밸류에이션 진행
+
+#### run_1
+
+- [log](https://wandb.ai/illunex_ai/news-topic-keyphrase-generation-model-dev/runs/lexss41l)
+- ZeRO 2 / batch_size 48 / num_train_epochs 50 / early_stopping_patience 3 (eval_loss)
