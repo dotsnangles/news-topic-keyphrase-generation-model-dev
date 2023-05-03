@@ -2,8 +2,10 @@ __pycache__
 .venv
 .log
 .temp
+.env
 data
 wandb
+outputs
 news_topic_extract-main
 text-generation-methods-master
 nohup.out
