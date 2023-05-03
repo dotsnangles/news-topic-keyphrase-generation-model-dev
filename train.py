@@ -19,58 +19,62 @@ from peft import get_peft_model, LoraConfig, TaskType
 from datasets import load_from_disk
 import wandb
 from dotenv import load_dotenv
-import hydra
-
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
+from hydra import compose, initialize
+from omegaconf import OmegaConf
 
 warnings.filterwarnings("ignore")
+
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 load_dotenv()
 
 NGPU = torch.cuda.device_count()
 NCPU = os.cpu_count()
 
+# Init Config
+initialize(version_base=None, config_path="conf", job_name="train")
+cfg = compose(config_name="train")
 
-@hydra.main(version_base=None, config_path="conf", config_name="train")
-def main(cfg):
-    # Paths and Names
-    PROJECT_NAME = cfg.path.PROJECT_NAME
-    RUN_ID = cfg.path.RUN_ID
+# Paths and Names
+PROJECT_NAME = cfg.path.PROJECT_NAME
+RUN_ID = cfg.path.RUN_ID
 
-    TRAIN_DATA_PATH = cfg.path.TRAIN_DATA_PATH
-    EVAL_DATA_PATH = cfg.path.EVAL_DATA_PATH
+TRAIN_DATA_PATH = cfg.path.TRAIN_DATA_PATH
+EVAL_DATA_PATH = cfg.path.EVAL_DATA_PATH
 
-    MODEL_CHECKPOINT = cfg.path.MODEL_CHECKPOINT
-    model_name = re.sub(r"[/-]", r"_", MODEL_CHECKPOINT).lower()
+MODEL_CHECKPOINT = cfg.path.MODEL_CHECKPOINT
+model_name = re.sub(r"[/-]", r"_", MODEL_CHECKPOINT).lower()
 
-    NOTEBOOK_NAME = "./train_seq2seq_plm.ipynb"
+NOTEBOOK_NAME = cfg.path.NOTEBOOK_NAME
 
-    ROOT_PATH = "./"
-    SAVE_PATH = os.path.join(ROOT_PATH, ".log")
+ROOT_PATH = "./"
+SAVE_PATH = os.path.join(ROOT_PATH, ".log")
 
-    run_name = f"{model_name}_{RUN_ID}"
-    output_dir = os.path.join(SAVE_PATH, run_name)
+run_name = f"{model_name}_{RUN_ID}"
+output_dir = os.path.join(SAVE_PATH, run_name)
 
-    os.makedirs(SAVE_PATH, exist_ok=True)
-    os.environ["WANDB_PROJECT"] = PROJECT_NAME
-    os.environ["WANDB_NOTEBOOK_NAME"] = NOTEBOOK_NAME
-    os.environ["WANDB_LOG_MODEL"] = "false"
-    os.environ["WANDB_WATCH"] = "all"
+os.makedirs(SAVE_PATH, exist_ok=True)
+os.environ["WANDB_PROJECT"] = PROJECT_NAME
+os.environ["WANDB_NOTEBOOK_NAME"] = NOTEBOOK_NAME
+os.environ["WANDB_LOG_MODEL"] = "false"
+os.environ["WANDB_WATCH"] = "all"
 
-    wandb.login(key=os.getenv("WANDB_API_KEY"))
+# Training Args
+batch_size = cfg.global_args.batch_size
+learning_rate = float(cfg.global_args.learning_rate)
 
-    # Training Args
-    batch_size = cfg.global_args.batch_size
-    learning_rate = float(cfg.global_args.learning_rate)
+training_args_prep = dict(
+    **cfg.training_args,
+    output_dir=output_dir,
+    run_name=run_name,
+    learning_rate=learning_rate * (batch_size * NGPU) / 8,
+    logging_steps=int(500 / NGPU),
+)
 
-    training_args_prep = dict(
-        **cfg.training_args,
-        output_dir=output_dir,
-        run_name=run_name,
-        learning_rate=learning_rate * (batch_size * NGPU) / 8,
-        logging_steps=int(500 / NGPU),
-    )
+wandb.login(key=os.getenv("WANDB_API_KEY"))
 
+
+def main():
     # Load Model & Tokenizer
     config = AutoConfig.from_pretrained(MODEL_CHECKPOINT)
     architectures = config.architectures[0].lower()
@@ -122,6 +126,9 @@ def main(cfg):
         data_collator = DataCollatorForSeq2Seq(**collator_args)
         trainer = Seq2SeqTrainer(**trainer_args, data_collator=data_collator)
     elif "causal" in architectures:
+        collator_args.pop("model")
+        collator_args.pop("padding")
+        collator_args["mlm"] = False
         data_collator = DataCollatorForLanguageModeling(**collator_args)
         trainer = Trainer(**trainer_args, data_collator=data_collator)
 

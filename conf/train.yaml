@@ -1,21 +1,22 @@
 path:
-  PROJECT_NAME: "news-topic-keyphrase-generation-model-dev"
-  RUN_ID: "v4_run_1"
-  TRAIN_DATA_PATH: "data/model_dev/model_dev_v4_train.hf"
-  EVAL_DATA_PATH: "data/model_dev/model_dev_v4_eval.hf"
-  MODEL_CHECKPOINT: "paust/pko-t5-base"
-  NOTEBOOK_NAME: "./train_seq2seq_plm.ipynb"
+  PROJECT_NAME: news-topic-keyphrase-generation-model-dev
+  RUN_ID: v4_run_2
+  TRAIN_DATA_PATH: data/model_dev/model_dev_v4_polyglot_1.3b_train.hf
+  EVAL_DATA_PATH: data/model_dev/model_dev_v4_polyglot_1.3b_eval.hf
+  MODEL_CHECKPOINT: EleutherAI/polyglot-ko-1.3b # EleutherAI/polyglot-ko-1.3b // EleutherAI/polyglot-ko-5.8b /// paust/pko-t5-base
+  NOTEBOOK_NAME: ./train.py
 
 global_args:
-  batch_size: 8
+  batch_size: 1
   epochs: 50
   learning_rate: 3e-6
   early_stopping_patience: 3
+
 training_args:
   report_to: wandb
-  num_train_epochs: ${epochs}
-  per_device_train_batch_size: ${batch_size}
-  per_device_eval_batch_size: ${batch_size}
+  num_train_epochs: ${global_args.epochs}
+  per_device_train_batch_size: ${global_args.batch_size}
+  per_device_eval_batch_size: ${global_args.batch_size}
   gradient_accumulation_steps: 1
   optim: adamw_torch  # 'adamw_torch' or 'adamw_hf'
   adam_beta1: 0.9
@@ -31,7 +32,7 @@ training_args:
   evaluation_strategy: epoch
   logging_strategy: steps
   logging_first_step: True
-  predict_with_generate: False
-  generation_max_length: 64
-  # generation_num_beams: generation_num_beams
-  fp16: False
+  # predict_with_generate: False
+  # generation_max_length: 64
+  # generation_num_beams: 5 # 1 is for greedy search
+  fp16: True

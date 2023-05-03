@@ -1,0 +1,186 @@
+polyglot-ko-1.3b
+
+In which compute environment are you running?
+This machine                                                                                                                                             
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Which type of machine are you using?                                                                                                                     
+multi-GPU                                                                                                                                                
+How many different machines will you use (use more than 1 for multi-node training)? [1]: 1                                                               
+Do you wish to optimize your script with torch dynamo?[yes/NO]:NO                                                                                        
+Do you want to use DeepSpeed? [yes/NO]: yes                                                                                                              
+Do you want to specify a json file to a DeepSpeed config? [yes/NO]: NO                                                                                   
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+What should be your DeepSpeed's ZeRO optimization stage?
+2                                                                                                                                                        
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Where to offload optimizer states?                                                                                                                       
+none                                                                                                                                                     
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Where to offload parameters?                                                                                                                             
+none                                                                                                                                                     
+How many gradient accumulation steps you're passing in your script? [1]: 1                                                                               
+Do you want to use gradient clipping? [yes/NO]: yes                                                                                                      
+What is the gradient clipping value? [1.0]:                                                                                                              
+Do you want to enable `deepspeed.zero.Init` when using ZeRO Stage-3 for constructing massive models? [yes/NO]: NO
+How many GPU(s) should be used for distributed training? [1]:6
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Do you wish to use FP16 or BF16 (mixed precision)?
+no  
+
+PASS
+
+-----
+
+In which compute environment are you running?
+This machine                                                                                                                                             
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Which type of machine are you using?                                                                                                                     
+multi-GPU                                                                                                                                                
+How many different machines will you use (use more than 1 for multi-node training)? [1]: 1                                                               
+Do you wish to optimize your script with torch dynamo?[yes/NO]:NO                                                                                        
+Do you want to use DeepSpeed? [yes/NO]: yes                                                                                                              
+Do you want to specify a json file to a DeepSpeed config? [yes/NO]: NO                                                                                   
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+What should be your DeepSpeed's ZeRO optimization stage?
+2                                                                                                                                                        
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Where to offload optimizer states?                                                                                                                       
+none                                                                                                                                                     
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Where to offload parameters?                                                                                                                             
+none                                                                                                                                                     
+How many gradient accumulation steps you're passing in your script? [1]: 1                                                                               
+Do you want to use gradient clipping? [yes/NO]: yes                                                                                                      
+What is the gradient clipping value? [1.0]:                                                                                                              
+Do you want to enable `deepspeed.zero.Init` when using ZeRO Stage-3 for constructing massive models? [yes/NO]: yes
+How many GPU(s) should be used for distributed training? [1]:6
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Do you wish to use FP16 or BF16 (mixed precision)?
+fp16         
+
+PASS
+
+-----
+
+In which compute environment are you running?
+This machine                                                                                                                                             
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Which type of machine are you using?                                                                                                                     
+multi-GPU                                                                                                                                                
+How many different machines will you use (use more than 1 for multi-node training)? [1]: 1                                                               
+Do you wish to optimize your script with torch dynamo?[yes/NO]:NO                                                                                        
+Do you want to use DeepSpeed? [yes/NO]: yes                                                                                                              
+Do you want to specify a json file to a DeepSpeed config? [yes/NO]: NO                                                                                   
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+What should be your DeepSpeed's ZeRO optimization stage?
+3                                                                                                                                                        
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Where to offload optimizer states?                                                                                                                       
+none                                                                                                                                                     
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Where to offload parameters?                                                                                                                             
+none                                                                                                                                                     
+How many gradient accumulation steps you're passing in your script? [1]: 1                                                                               
+Do you want to use gradient clipping? [yes/NO]: yes                                                                                                      
+What is the gradient clipping value? [1.0]:                                                                                                              
+Do you want to save 16-bit model weights when using ZeRO Stage-3? [yes/NO]: yes
+Do you want to enable `deepspeed.zero.Init` when using ZeRO Stage-3 for constructing massive models? [yes/NO]: yes
+How many GPU(s) should be used for distributed training? [1]:6
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Do you wish to use FP16 or BF16 (mixed precision)?
+fp16  
+
+PASS
+
+-----
+
+In which compute environment are you running?
+This machine                                                                                                                                             
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Which type of machine are you using?                                                                                                                     
+multi-GPU                                                                                                                                                
+How many different machines will you use (use more than 1 for multi-node training)? [1]: 1                                                               
+Do you wish to optimize your script with torch dynamo?[yes/NO]:NO                                                                                        
+Do you want to use DeepSpeed? [yes/NO]: yes                                                                                                              
+Do you want to specify a json file to a DeepSpeed config? [yes/NO]: NO                                                                                   
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+What should be your DeepSpeed's ZeRO optimization stage?
+3                                                                                                                                                        
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Where to offload optimizer states?                                                                                                                       
+cpu                                                                                                                                                      
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Where to offload parameters?                                                                                                                             
+cpu                                                                                                                                                      
+How many gradient accumulation steps you're passing in your script? [1]: 1                                                                               
+Do you want to use gradient clipping? [yes/NO]: yes                                                                                                      
+What is the gradient clipping value? [1.0]:                                                                                                              
+Do you want to save 16-bit model weights when using ZeRO Stage-3? [yes/NO]: yes
+Do you want to enable `deepspeed.zero.Init` when using ZeRO Stage-3 for constructing massive models? [yes/NO]: yes
+How many GPU(s) should be used for distributed training? [1]:6
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Do you wish to use FP16 or BF16 (mixed precision)?
+fp16   
+
+PASS
+
+
+
+polyglot-ko-5.8b
+
+In which compute environment are you running?
+This machine                                                                                                                                             
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Which type of machine are you using?                                                                                                                     
+multi-GPU                                                                                                                                                
+How many different machines will you use (use more than 1 for multi-node training)? [1]: 1                                                               
+Do you wish to optimize your script with torch dynamo?[yes/NO]:NO                                                                                        
+Do you want to use DeepSpeed? [yes/NO]: yes                                                                                                              
+Do you want to specify a json file to a DeepSpeed config? [yes/NO]: NO                                                                                   
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+What should be your DeepSpeed's ZeRO optimization stage?
+3                                                                                                                                                        
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Where to offload optimizer states?                                                                                                                       
+cpu                                                                                                                                                      
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Where to offload parameters?                                                                                                                             
+cpu                                                                                                                                                      
+How many gradient accumulation steps you're passing in your script? [1]: 1                                                                               
+Do you want to use gradient clipping? [yes/NO]: yes                                                                                                      
+What is the gradient clipping value? [1.0]:                                                                                                              
+Do you want to save 16-bit model weights when using ZeRO Stage-3? [yes/NO]: yes
+Do you want to enable `deepspeed.zero.Init` when using ZeRO Stage-3 for constructing massive models? [yes/NO]: yes
+How many GPU(s) should be used for distributed training? [1]:6
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Do you wish to use FP16 or BF16 (mixed precision)?
+fp16   
+
+NO PASS
+
+-----
+
+In which compute environment are you running?
+This machine                                                                                                                                             
+---------------------------------------------------------------------------------------------------------------------------------------------------------Which type of machine are you using?                                                                                                                     
+multi-GPU                                                                                                                                                
+How many different machines will you use (use more than 1 for multi-node training)? [1]: 1                                                               
+Do you wish to optimize your script with torch dynamo?[yes/NO]:NO                                                                                        
+Do you want to use DeepSpeed? [yes/NO]: yes                                                                                                              
+Do you want to specify a json file to a DeepSpeed config? [yes/NO]: NO                                                                                   
+---------------------------------------------------------------------------------------------------------------------------------------------------------What should be your DeepSpeed's ZeRO optimization stage?
+3                                                                                                                                                        
+---------------------------------------------------------------------------------------------------------------------------------------------------------Where to offload optimizer states?                                                                                                                       
+none                                                                                                                                                     
+---------------------------------------------------------------------------------------------------------------------------------------------------------Where to offload parameters?                                                                                                                             
+none                                                                                                                                                     
+How many gradient accumulation steps you're passing in your script? [1]: 1                                                                               
+Do you want to use gradient clipping? [yes/NO]: yes                                                                                                      
+What is the gradient clipping value? [1.0]:                                                                                                              
+Do you want to save 16-bit model weights when using ZeRO Stage-3? [yes/NO]: yes
+Do you want to enable `deepspeed.zero.Init` when using ZeRO Stage-3 for constructing massive models? [yes/NO]: yes
+How many GPU(s) should be used for distributed training? [1]:6
+---------------------------------------------------------------------------------------------------------------------------------------------------------Do you wish to use FP16 or BF16 (mixed precision)?
+fp16                
+
+NO PASS
