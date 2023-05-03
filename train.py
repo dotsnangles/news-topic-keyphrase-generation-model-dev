@@ -1,9 +1,4 @@
 import os
-
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-# os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"  # Arrange GPU devices starting from 0
-# os.environ["CUDA_VISIBLE_DEVICES"]= "0"  # Set the GPUs to use
-
 import re
 import warnings
 import torch
@@ -23,22 +18,29 @@ from transformers import (
 from peft import get_peft_model, LoraConfig, TaskType
 from datasets import load_from_disk
 import wandb
+from dotenv import load_dotenv
+import hydra
+
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 warnings.filterwarnings("ignore")
 
+load_dotenv()
 
-def main():
-    NGPU = torch.cuda.device_count()
-    NCPU = os.cpu_count()
+NGPU = torch.cuda.device_count()
+NCPU = os.cpu_count()
 
+
+@hydra.main(version_base=None, config_path="conf", config_name="train")
+def main(cfg):
     # Paths and Names
-    PROJECT_NAME = "news-topic-keyphrase-generation-model-dev"
-    RUN_ID = "v4_run_1"
+    PROJECT_NAME = cfg.path.PROJECT_NAME
+    RUN_ID = cfg.path.RUN_ID
 
-    TRAIN_DATA_PATH = "data/model_dev/model_dev_v4_train.hf"
-    EVAL_DATA_PATH = "data/model_dev/model_dev_v4_eval.hf"
+    TRAIN_DATA_PATH = cfg.path.TRAIN_DATA_PATH
+    EVAL_DATA_PATH = cfg.path.EVAL_DATA_PATH
 
-    MODEL_CHECKPOINT = "paust/pko-t5-base"
+    MODEL_CHECKPOINT = cfg.path.MODEL_CHECKPOINT
     model_name = re.sub(r"[/-]", r"_", MODEL_CHECKPOINT).lower()
 
     NOTEBOOK_NAME = "./train_seq2seq_plm.ipynb"
@@ -55,86 +57,73 @@ def main():
     os.environ["WANDB_LOG_MODEL"] = "false"
     os.environ["WANDB_WATCH"] = "all"
 
-    wandb.login()
+    wandb.login(key=os.getenv("WANDB_API_KEY"))
 
     # Training Args
-    batch_size = 8
+    batch_size = cfg.global_args.batch_size
+    learning_rate = float(cfg.global_args.learning_rate)
 
-    training_args = Seq2SeqTrainingArguments(
+    training_args_prep = dict(
+        **cfg.training_args,
         output_dir=output_dir,
         run_name=run_name,
-        report_to="wandb",
-        num_train_epochs=50,
-        per_device_train_batch_size=batch_size,
-        per_device_eval_batch_size=batch_size,
-        gradient_accumulation_steps=1,
-        # ### AdaFactor
-        # optim= 'adafactor',
-        # learning_rate=3e-6 * (batch_size * NGPU) / 8,
-        # lr_scheduler_type='linear', # 'linear', 'cosine', 'cosine_with_restarts', 'polynomial', 'constant', 'constant_with_warmup'
-        # warmup_ratio=0,
-        ### AdamW
-        optim="adamw_torch",  # 'adamw_torch' or 'adamw_hf'
-        learning_rate=3e-6
-        * (batch_size * NGPU)
-        / 8,  # 3e-6 * (per_device_train_batch_size * NGPU) / 8
-        adam_beta1=0.9,
-        adam_beta2=0.999,
-        adam_epsilon=1e-8,
-        weight_decay=0.01,
-        lr_scheduler_type="linear",  # 'linear', 'cosine', 'cosine_with_restarts', 'polynomial', 'constant', 'constant_with_warmup'
-        warmup_ratio=0,
-        save_total_limit=2,
-        load_best_model_at_end=True,
-        metric_for_best_model="eval_loss",
-        save_strategy="epoch",
-        evaluation_strategy="epoch",
-        logging_strategy="steps",
-        logging_first_step=True,
+        learning_rate=learning_rate * (batch_size * NGPU) / 8,
         logging_steps=int(500 / NGPU),
-        predict_with_generate=False,
-        generation_max_length=64,
-        # generation_num_beams=generation_num_beams,
-        fp16=False,
     )
 
     # Load Model & Tokenizer
     config = AutoConfig.from_pretrained(MODEL_CHECKPOINT)
-    model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_CHECKPOINT, config=config)
+    architectures = config.architectures[0].lower()
+
+    if "conditional" in architectures:
+        training_args = Seq2SeqTrainingArguments(**training_args_prep)
+        model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_CHECKPOINT, config=config)
+        task_type = TaskType.SEQ_2_SEQ_LM
+    elif "causal" in architectures:
+        training_args = TrainingArguments(**training_args_prep)
+        model = AutoModelForCausalLM.from_pretrained(MODEL_CHECKPOINT, config=config)
+        task_type = TaskType.CAUSAL_LM
+
     tokenizer = AutoTokenizer.from_pretrained(MODEL_CHECKPOINT)
 
     # Prepare Model to Use LoRA
     peft_config = LoraConfig(
-        task_type=TaskType.SEQ_2_SEQ_LM,
+        task_type=task_type,
         inference_mode=False,
         r=8,
         lora_alpha=32,
         lora_dropout=0.1,
     )
+
     model = get_peft_model(model, peft_config)
     model.print_trainable_parameters()
 
     # Load Data
     train_dataset = load_from_disk(TRAIN_DATA_PATH)
     eval_dataset = load_from_disk(EVAL_DATA_PATH)
-    tokenizer.decode(train_dataset["input_ids"][0])
-    tokenizer.decode(train_dataset["labels"][0])
 
     # Train
-    data_collator = DataCollatorForSeq2Seq(
-        tokenizer=tokenizer, model=model, padding=True
-    )
-
-    trainer = Seq2SeqTrainer(
+    collator_args = dict(tokenizer=tokenizer, model=model, padding=True)
+    trainer_args = dict(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         tokenizer=tokenizer,
-        data_collator=data_collator,
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
+        callbacks=[
+            EarlyStoppingCallback(
+                early_stopping_patience=cfg.global_args.early_stopping_patience
+            )
+        ],
         # compute_metrics=compute_metrics,
     )
+
+    if "conditional" in architectures:
+        data_collator = DataCollatorForSeq2Seq(**collator_args)
+        trainer = Seq2SeqTrainer(**trainer_args, data_collator=data_collator)
+    elif "causal" in architectures:
+        data_collator = DataCollatorForLanguageModeling(**collator_args)
+        trainer = Trainer(**trainer_args, data_collator=data_collator)
 
     trainer.train()
     wandb.finish()
@@ -155,6 +144,7 @@ def main():
     ]
 
     ckpts = os.listdir(output_dir)
+    ckpts = [dir_ for dir_ in output_dir if dir_ not in keep]
     for ckpt in ckpts:
         ckpt = os.path.join(output_dir, ckpt)
         for item in os.listdir(ckpt):
