@@ -15,7 +15,7 @@ from transformers import (
     DataCollatorForLanguageModeling,
     EarlyStoppingCallback,
 )
-from peft import get_peft_model, LoraConfig, TaskType
+from peft import LoraConfig, TaskType, get_peft_model, prepare_model_for_int8_training
 from datasets import load_from_disk
 import wandb
 from dotenv import load_dotenv
@@ -26,14 +26,16 @@ warnings.filterwarnings("ignore")
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-load_dotenv()
-
 NGPU = torch.cuda.device_count()
 NCPU = os.cpu_count()
 
 # Init Config
+load_dotenv()
 initialize(version_base=None, config_path="conf", job_name="train")
 cfg = compose(config_name="train")
+
+# Use LLM.int8() or Not
+int8 = cfg.global_args.int8
 
 # Paths and Names
 PROJECT_NAME = cfg.path.PROJECT_NAME
@@ -77,18 +79,46 @@ wandb.login(key=os.getenv("WANDB_API_KEY"))
 def main():
     # Load Model & Tokenizer
     config = AutoConfig.from_pretrained(MODEL_CHECKPOINT)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_CHECKPOINT)
+
     architectures = config.architectures[0].lower()
 
     if "conditional" in architectures:
         training_args = Seq2SeqTrainingArguments(**training_args_prep)
-        model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_CHECKPOINT, config=config)
         task_type = TaskType.SEQ_2_SEQ_LM
+        if int8 == True:
+            model = AutoModelForSeq2SeqLM.from_pretrained(
+                MODEL_CHECKPOINT,
+                config=config,
+                load_in_8bit=True,
+                device_map="auto",
+                torch_dtype=torch.float16,
+                low_cpu_mem_usage=True,
+            )
+            model = prepare_model_for_int8_training(model)
+        else:
+            model = AutoModelForSeq2SeqLM.from_pretrained(
+                MODEL_CHECKPOINT,
+                config=config,
+            )
     elif "causal" in architectures:
         training_args = TrainingArguments(**training_args_prep)
-        model = AutoModelForCausalLM.from_pretrained(MODEL_CHECKPOINT, config=config)
         task_type = TaskType.CAUSAL_LM
-
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_CHECKPOINT)
+        if int8 == True:
+            model = AutoModelForCausalLM.from_pretrained(
+                MODEL_CHECKPOINT,
+                config=config,
+                load_in_8bit=True,
+                device_map="auto",
+                torch_dtype=torch.float16,
+                low_cpu_mem_usage=True,
+            )
+            model = prepare_model_for_int8_training(model)
+        else:
+            model = AutoModelForCausalLM.from_pretrained(
+                MODEL_CHECKPOINT,
+                config=config,
+            )
 
     # Prepare Model to Use LoRA
     peft_config = LoraConfig(
@@ -131,6 +161,10 @@ def main():
         collator_args["mlm"] = False
         data_collator = DataCollatorForLanguageModeling(**collator_args)
         trainer = Trainer(**trainer_args, data_collator=data_collator)
+
+    model.config.use_cache = (
+        False  # silence the warnings. Please re-enable for inference!
+    )
 
     trainer.train()
     wandb.finish()

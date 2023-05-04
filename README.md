@@ -169,10 +169,32 @@
 - ZeRO 기법 시험 및 적용
   - Stage 2/3 and CPU Off-load 시험 예정 (추후 LLM 운영 대비)
   - ZeRO의 경우 Adam/AdamW에 최적화되어 있기에 AdamW 사용
-- paust/pko-t5-base와 EleutherAI/polyglot-ko-5.8b로 베이스라인 설정
+- paust/pko-t5-base와 EleutherAI/polyglot-ko-1.2b로 베이스라인 설정
 - 정의한 metrics를 통해 사전 검증 후 휴먼 이밸류에이션 진행
 
 #### run_1
 
-- [log](https://wandb.ai/illunex_ai/news-topic-keyphrase-generation-model-dev/runs/lexss41l)
+- [log](https://wandb.ai/illunex_ai/news-topic-keyphrase-generation-model-dev)
+- paust/pko-t5-base(0.22b)
 - ZeRO 2 / batch_size 48 / num_train_epochs 50 / early_stopping_patience 3 (eval_loss)
+- 'rouge1': 67.8227,
+- 'rouge2': 47.6712,
+- 'rougeL': 55.9405,
+- 'rougeLsum': 55.9405,
+- 'F1@10': 60.2782,
+- 'jaccard_similarity': 27.6543,
+- 'gen_len': 48.3867
+
+#### LLM.int8() / LoRA / ZeRO Training Test (with LLaMA-7b / polyglot-ko-1.2b / polyglot-ko-5.8b)
+- LLaMA-7b
+  - GPT4ALL에 준비된 dataset와 training script로 훈련을 진행
+  - max_length 512로 1 batch per device 훈련이 가능했음
+- polyglot-ko-5.8b
+  - 현재 개발 중인 키프레이즈 추출 모델의 데이터세트의 max_length의 범위는 512에서 1024까지
+  - LLM.int8()과 LoRA를 활용한 Single GPU 훈련이 가능했음
+- polyglot-ko-1.2b
+  - LoRA / ZeRO 3 Offload를 활용해 24배치의 안정적인 훈련이 가능
+#### run_2 (RUNNING)
+- [log](https://wandb.ai/illunex_ai/news-topic-keyphrase-generation-model-dev)
+- EleutherAI/polyglot-ko-1.2b
+- LoRA / ZeRO 3 Offload / batch_size 24 / num_train_epochs 10 / early_stopping_patience 3 (eval_loss)

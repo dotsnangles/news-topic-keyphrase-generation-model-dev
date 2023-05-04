@@ -7,10 +7,11 @@ path:
   NOTEBOOK_NAME: ./train.py
 
 global_args:
-  batch_size: 1
-  epochs: 50
+  batch_size: 4
+  epochs: 10
   learning_rate: 3e-6
   early_stopping_patience: 3
+  int8: False
 
 training_args:
   report_to: wandb
@@ -35,4 +36,4 @@ training_args:
   # predict_with_generate: False
   # generation_max_length: 64
   # generation_num_beams: 5 # 1 is for greedy search
-  fp16: True
+  fp16: False
