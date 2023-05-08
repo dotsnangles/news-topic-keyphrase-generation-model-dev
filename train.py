@@ -178,14 +178,15 @@ def main():
         "config.json",
         "pytorch_model.bin",
         "special_tokens_map.json",
-        "tokenizer.json",
         "tokenizer_config.json",
-        "vocab.txt" "adapter_config.json",
+        "tokenizer.json",
+        "vocab.txt",
+        "adapter_config.json",
         "adapter_model.bin",
     ]
 
     ckpts = os.listdir(output_dir)
-    ckpts = [dir_ for dir_ in output_dir if dir_ not in keep]
+    ckpts = [ckpt for ckpt in ckpts if ckpt not in keep]
     for ckpt in ckpts:
         ckpt = os.path.join(output_dir, ckpt)
         for item in os.listdir(ckpt):
