@@ -194,7 +194,11 @@
   - LLM.int8()과 LoRA를 활용한 Single GPU 훈련이 가능했음
 - polyglot-ko-1.2b
   - LoRA / ZeRO 3 Offload를 활용해 24배치의 안정적인 훈련이 가능
-#### run_2 (RUNNING)
+
+#### run_2~7
 - [log](https://wandb.ai/illunex_ai/news-topic-keyphrase-generation-model-dev)
 - EleutherAI/polyglot-ko-1.2b
-- LoRA / ZeRO 3 Offload / batch_size 24 / num_train_epochs 10 / early_stopping_patience 3 (eval_loss)
+- LoRA / ZeRO 3 Offload / batch_size 18~24 / num_train_epochs 10 / early_stopping_patience 3 (eval_loss)
+- learning rate test
+  - 48e-6 per batch size 8
+- Decoder 모델 훈련 데이터 수정
