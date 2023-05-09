@@ -7,7 +7,7 @@ path:
   NOTEBOOK_NAME: ./train.py
 
 global_args:
-  batch_size: 4
+  batch_size: 3
   epochs: 3
   learning_rate: 48e-6 # at batch_size 8 # 3e-6, 12e-6, 48e-6
   early_stopping_patience: 3
