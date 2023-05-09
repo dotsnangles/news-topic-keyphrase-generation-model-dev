@@ -89,7 +89,6 @@ def main():
         if int8 == True:
             model = AutoModelForSeq2SeqLM.from_pretrained(
                 MODEL_CHECKPOINT,
-                config=config,
                 load_in_8bit=True,
                 device_map="auto",
                 torch_dtype=torch.float16,
@@ -99,7 +98,6 @@ def main():
         else:
             model = AutoModelForSeq2SeqLM.from_pretrained(
                 MODEL_CHECKPOINT,
-                config=config,
             )
     elif "causal" in architectures:
         training_args = TrainingArguments(**training_args_prep)
@@ -107,7 +105,6 @@ def main():
         if int8 == True:
             model = AutoModelForCausalLM.from_pretrained(
                 MODEL_CHECKPOINT,
-                config=config,
                 load_in_8bit=True,
                 device_map="auto",
                 torch_dtype=torch.float16,
@@ -117,7 +114,6 @@ def main():
         else:
             model = AutoModelForCausalLM.from_pretrained(
                 MODEL_CHECKPOINT,
-                config=config,
             )
 
     # Prepare Model to Use LoRA
@@ -162,36 +158,15 @@ def main():
         data_collator = DataCollatorForLanguageModeling(**collator_args)
         trainer = Trainer(**trainer_args, data_collator=data_collator)
 
-    model.config.use_cache = (
-        False  # silence the warnings. Please re-enable for inference!
-    )
+    # model.config.use_cache = (
+    #     False  # silence the warnings. Please re-enable for inference!
+    # )
 
     trainer.train()
     wandb.finish()
 
     # Save LoRA Adapters for Best CKPT
     model.save_pretrained(output_dir)
-
-    # Delete Unnecessaries
-    keep = [
-        "added_tokens.json",
-        "config.json",
-        "pytorch_model.bin",
-        "special_tokens_map.json",
-        "tokenizer_config.json",
-        "tokenizer.json",
-        "vocab.txt",
-        "adapter_config.json",
-        "adapter_model.bin",
-    ]
-
-    ckpts = os.listdir(output_dir)
-    ckpts = [ckpt for ckpt in ckpts if ckpt not in keep]
-    for ckpt in ckpts:
-        ckpt = os.path.join(output_dir, ckpt)
-        for item in os.listdir(ckpt):
-            if item not in keep:
-                os.remove(os.path.join(ckpt, item))
 
 
 if __name__ == "__main__":
