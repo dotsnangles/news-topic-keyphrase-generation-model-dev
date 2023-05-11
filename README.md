@@ -162,17 +162,17 @@
 - 효율적인 훈련을 위해 LoRA(PEFT) 및 adafactor를 시험해볼 예정
   - 기본적으로는 현재까지 사용한 AdamW without LoRA를 유지
 
-### paust/pko-t5-base with Data V4 (11683 samples) (ZeRO)
+### paust/pko-t5-base & EleutherAI/polyglot-ko-1.3b with Data V4 (11683 samples) (ZeRO)
 
 - 추가 라벨링을 실시한 dataset v4를 활용한 훈련
 - train/eval sample ratio: 76472:3000
 - ZeRO 기법 시험 및 적용
   - Stage 2/3 and CPU Off-load 시험 예정 (추후 LLM 운영 대비)
   - ZeRO의 경우 Adam/AdamW에 최적화되어 있기에 AdamW 사용
-- paust/pko-t5-base와 EleutherAI/polyglot-ko-1.2b로 베이스라인 설정
+- paust/pko-t5-base와 EleutherAI/polyglot-ko-1.3b로 베이스라인 설정
 - 정의한 metrics를 통해 사전 검증 후 휴먼 이밸류에이션 진행
 
-#### run_1
+#### run_1 (paust/pko-t5-base(0.22b))
 
 - [log](https://wandb.ai/illunex_ai/news-topic-keyphrase-generation-model-dev)
 - paust/pko-t5-base(0.22b)
@@ -195,9 +195,9 @@
 - polyglot-ko-1.2b
   - LoRA / ZeRO 3 Offload를 활용해 18~24배치의 안정적인 훈련이 가능
 
-#### run_2~7
+#### run_2~7 (EleutherAI/polyglot-ko-1.3b)
 - [log](https://wandb.ai/illunex_ai/news-topic-keyphrase-generation-model-dev)
-- EleutherAI/polyglot-ko-1.2b
+- EleutherAI/polyglot-ko-1.3b
 - LoRA / ZeRO 3 Offload / batch_size 18~24 / num_train_epochs 10 / early_stopping_patience 3 (eval_loss)
 - learning rate test
   - 48e-6 per batch size 8
@@ -210,5 +210,15 @@
 - source와 target이 하나의 샘플로 묶여 CLM 방식으로 훈련이 진행되기 때문에 후처리 로직을 작성해야 할 필요가 있음
 - 현재 source와 target의 prefix는 "generate keyphrases:" 및 "keyphrases generated:"
 - 현재 생성 결과에 "keyphrases generated:" 이후 웹사이트 주소가 뜨는 경우가 있음
-- run_9부터 source/target prefix를 토크나이저 사전에 추가한 뒤 훈련을 수행해보고자 함 (기존 학습 맥락에서 이탈된 토큰 사용 목적)
-- 메트릭 테스트는 run_9부터 후처리 로직을 완성하고 진행할 예정
+
+#### run_9~10
+- source/target prefix를 토크나이저 사전에 추가한 뒤 훈련을 수행해보고자 함 (기존 학습 맥락에서 이탈된 토큰 사용 목적)
+- run_9: 1 에폭 시험 훈련
+- run_10: 20 에폭 훈련
+- 메트릭 테스트는 run_10부터 후처리 로직을 완성하고 진행할 예정
+- EleutherAI/polyglot-ko-1.3b의 경우 batch_size 8을 기준으로 계속 해서 learning rate을 높히는 실험을 진행했음
+  - 현재까지 loss상 overfit이 일어나지 않음
+  - run_10의 경우 18 배치 기준 최대 learning rate를 약 0.00045로 설정 (pretrain시 lr: 0.0002; run_8~9: 약 0.0002)
+- 훈련 결과를 보고 판단해봐야 하나 현재 모델이 수행하는 태스크가 요약에 가까운 만큼 clm인 EleutherAI/polyglot-ko-1.3b보다 seq2seq 모델인 T5가 더 유리하지 않은가, 라는 가설
+  - 현재 pko-t5-base를 finetuning한 모델은 키프레이즈를 충분히 잘 생성하고 있음
+  - 하지만 EleutherAI/polyglot-ko-1.3b 경우 충분히 훈련이 되지 않은 상황일 수도 있으며 run_10의 결과를 보고 한 번의 추가 훈련을 더 진행할 예정
