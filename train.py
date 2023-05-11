@@ -45,6 +45,10 @@ TRAIN_DATA_PATH = cfg.path.TRAIN_DATA_PATH
 EVAL_DATA_PATH = cfg.path.EVAL_DATA_PATH
 
 MODEL_CHECKPOINT = cfg.path.MODEL_CHECKPOINT
+if cfg.path.TOKENIZER_CHECKPOINT != False:
+    TOKENIZER_CHECKPOINT = cfg.path.TOKENIZER_CHECKPOINT
+else:
+    TOKENIZER_CHECKPOINT = cfg.path.MODEL_CHECKPOINT
 model_name = re.sub(r"[/-]", r"_", MODEL_CHECKPOINT).lower()
 
 NOTEBOOK_NAME = cfg.path.NOTEBOOK_NAME
@@ -79,7 +83,7 @@ wandb.login(key=os.getenv("WANDB_API_KEY"))
 def main():
     # Load Model & Tokenizer
     config = AutoConfig.from_pretrained(MODEL_CHECKPOINT)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_CHECKPOINT)
+    tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_CHECKPOINT)
 
     architectures = config.architectures[0].lower()
 
@@ -126,6 +130,7 @@ def main():
     )
 
     model = get_peft_model(model, peft_config)
+    model.resize_token_embeddings(len(tokenizer))
     model.print_trainable_parameters()
 
     # Load Data
@@ -165,8 +170,9 @@ def main():
     trainer.train()
     wandb.finish()
 
-    # Save LoRA Adapters for Best CKPT
+    # Save LoRA Adapters for Best CKPT and tokenizer
     model.save_pretrained(output_dir)
+    tokenizer.save_pretrained(output_dir)
 
 
 if __name__ == "__main__":

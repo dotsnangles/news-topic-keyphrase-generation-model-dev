@@ -84,7 +84,7 @@
   - generation method for evaluation: greedy search
 
 - Results
-   - papermill/.old 참조
+   - notebooks.old/papermill/.old 참조
    - F1 스코어를 메트릭으로 사용하는 것은 좀 더 고려가 필요할 것으로 보임
       - 키프레이즈를 완전히 동일하지는 않더라도 비슷하게 생성하는 경우나 생성된 키프레이즈의 순서가 라벨의 순서와 다를 경우 모두 오답 처리하는 방식이기 때문에 문제가 있어보임
    - 현재 ROUGE 스코어는 유니그램 기준으로 20 내외를 기록하고 있음
@@ -117,14 +117,14 @@
   - 일반적인 신문기사의 길이를 고려
 - output_text의 토큰 길이는 64 미만으로 설정
   - 과도하게 긴 구절이 포함된 라벨이 생성된 샘플을 제외
-- papermill/paust_pko_t5_base_v3_run_3.ipynb
+- notebooks.old/papermill/paust_pko_t5_base_v3_run_3.ipynb
 - [log](https://wandb.ai/dotsnangles/news-topic-keyphrase-generation-model-dev?workspace=user-dotsnangles)
 
 #### retrospective after run_3
 
 - run_1과 run_2에서 개발 환경과 메트릭 함수의 작동상 오류가 있었음
 - 수정 후 run_3 진행
-- [result](papermill/paust_pko_t5_base_v3_run_3.ipynb)
+- [result](notebooks.old/papermill/paust_pko_t5_base_v3_run_3.ipynb)
 - 15에폭 훈련을 진행했으며 마지막에도 training loss가 eval loss보다 높아 좀 더 긴 훈련을 진행해볼 필요가 있음
 - generation 시간이 오래 걸려 에폭마다 evaluation time이 긴 문제가 있었기 때문에 추후에는 eval loss를 모니터링하는 방식으로 훈련을 진행하고 best ckpt를 로드해 메트릭을 검증하는 쪽으로 가려고 함
 
@@ -143,7 +143,7 @@
    - 'test_jaccard_similarity': 26.0938,
 - Jaccard Similarity는 F1@K에 개념이 포함되어 있으며 유사한 키워드를 정답 처리하는 식으로 사용하기 어려움에 따라 참고용으로 사용
 - 메트릭 함수를 조금 더 확실하게 검토한 뒤 훈련 데이터를 늘려 학습을 진행할 예정
-- [추론 결과 링크 최하단 Generate 부분 참조](papermill/paust_pko_t5_base_v3_run_5.ipynb)
+- [추론 결과 링크 최하단 Generate 부분 참조](notebooks.old/papermill/paust_pko_t5_base_v3_run_5.ipynb)
 
 ### Todos after paust/pko-t5-base with Data V3
 
@@ -151,7 +151,7 @@
    - ROUGE 및 F1@10을 검증에 사용하나 70~80점 달성시 구축 모델의 성능 측정은 휴먼 이밸류에이션을 기준으로 함
      - 현재 정의한 metrics는 GPT 3.5 Turbo가 생성한 라벨과 구축 모델의 추론 결과 간 유사성을 측정하는 척도로 참고
      - 70~80점 달성시 GPT 3.5 Turbo와 유사한 추론 결과가 생성되었다고 볼 수 있음
-       - 현재 paust_pko_t5_base_v3_run_5의 경우 ROUGE@1과 F1@10이 각각 65.73와 59.77이나 실제 추론 결과를 살펴보면 이미 핵심어 추출의 품질이 준수하다고 판단됨 ([link 최하단 참조](papermill/paust_pko_t5_base_v3_run_5.ipynb))
+       - 현재 paust_pko_t5_base_v3_run_5의 경우 ROUGE@1과 F1@10이 각각 65.73와 59.77이나 실제 추론 결과를 살펴보면 이미 핵심어 추출의 품질이 준수하다고 판단됨 ([link 최하단 참조](notebooks.old/papermill/paust_pko_t5_base_v3_run_5.ipynb))
      - 본격적인 휴먼 이밸류에이션에서는 입력(x of eval dataset: title_content)과 추론 결과(y_hat: key-phrases)를 비교하여 구축 모델의 신문기사 내 핵심어 추출 성능을 판단
 - 구축 모델이 다양한 신문기사에서 일관된 성능을 유지하기 위해서는 훈련 데이터 보완이 필요
   - 현재 확보한 훈련 샘플은 11683건
@@ -188,12 +188,12 @@
 #### LLM.int8() / LoRA / ZeRO Training Test (with LLaMA-7b / polyglot-ko-1.2b / polyglot-ko-5.8b)
 - LLaMA-7b
   - GPT4ALL에 준비된 dataset와 training script로 훈련을 진행
-  - max_length 512로 1 batch per device 훈련이 가능했음
+  - context length 512로 1 batch per device 훈련이 가능했음
 - polyglot-ko-5.8b
-  - 현재 개발 중인 키프레이즈 추출 모델의 데이터세트의 max_length의 범위는 512에서 1024까지
+  - 현재 개발 중인 키프레이즈 추출 모델의 데이터세트의 context length의 범위는 대략 512에서 1024까지 (+64)
   - LLM.int8()과 LoRA를 활용한 Single GPU 훈련이 가능했음
 - polyglot-ko-1.2b
-  - LoRA / ZeRO 3 Offload를 활용해 24배치의 안정적인 훈련이 가능
+  - LoRA / ZeRO 3 Offload를 활용해 18~24배치의 안정적인 훈련이 가능
 
 #### run_2~7
 - [log](https://wandb.ai/illunex_ai/news-topic-keyphrase-generation-model-dev)
@@ -201,4 +201,14 @@
 - LoRA / ZeRO 3 Offload / batch_size 18~24 / num_train_epochs 10 / early_stopping_patience 3 (eval_loss)
 - learning rate test
   - 48e-6 per batch size 8
+  - [polyglot-ko-1.3B pretrain info](https://wandb.ai/eleutherai/polyglot-ko/groups/polyglot-ko-1.3B)
 - Decoder 모델 훈련 데이터 수정
+
+#### run_8
+- learning rate: 96e-6 per batch size 8
+- [result](.log/eleutherai_polyglot_ko_1.3b_v4_run_8/eleutherai_polyglot_ko_1.3b_v4_run_8.txt)
+- source와 target이 하나의 샘플로 묶여 CLM 방식으로 훈련이 진행되기 때문에 후처리 로직을 작성해야 할 필요가 있음
+- 현재 source와 target의 prefix는 "generate keyphrases:" 및 "keyphrases generated:"
+- 현재 생성 결과에 "keyphrases generated:" 이후 웹사이트 주소가 뜨는 경우가 있음
+- run_9부터 source/target prefix를 토크나이저 사전에 추가한 뒤 훈련을 수행해보고자 함 (기존 학습 맥락에서 이탈된 토큰 사용 목적)
+- 메트릭 테스트는 run_9부터 후처리 로직을 완성하고 진행할 예정

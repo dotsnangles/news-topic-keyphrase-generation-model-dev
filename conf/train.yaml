@@ -1,15 +1,16 @@
 path:
   PROJECT_NAME: news-topic-keyphrase-generation-model-dev
-  RUN_ID: v4_run_7
+  RUN_ID: v4_run_9
   TRAIN_DATA_PATH: data/model_dev/model_dev_v4_polyglot_1.3b_train.hf
   EVAL_DATA_PATH: data/model_dev/model_dev_v4_polyglot_1.3b_eval.hf
   MODEL_CHECKPOINT: EleutherAI/polyglot-ko-1.3b # EleutherAI/polyglot-ko-1.3b // EleutherAI/polyglot-ko-5.8b /// paust/pko-t5-base
+  TOKENIZER_CHECKPOINT: clm_tokenizer
   NOTEBOOK_NAME: ./train.py
 
 global_args:
   batch_size: 3
-  epochs: 3
-  learning_rate: 48e-6 # at batch_size 8 # 3e-6, 12e-6, 48e-6
+  epochs: 1
+  learning_rate: 96e-6 # at batch_size 8 # 3e-6, 12e-6, 48e-6, 96e-6
   early_stopping_patience: 3
   int8: False
 
@@ -24,9 +25,9 @@ training_args:
   adam_beta2: 0.999
   adam_epsilon: 1e-8
   weight_decay: 0.01
-  lr_scheduler_type: linear  # 'linear', 'cosine', 'cosine_with_restarts', 'polynomial', 'constant', 'constant_with_warmup'
-  warmup_ratio: 0
-  save_total_limit: 1 # 1: best ckpt only, 2: best and last
+  lr_scheduler_type: cosine  # 'linear', 'cosine', 'cosine_with_restarts', 'polynomial', 'constant', 'constant_with_warmup'
+  warmup_ratio: 0.01
+  save_total_limit: 2 # 1: best ckpt only, 2: best and last
   load_best_model_at_end: True
   metric_for_best_model: eval_loss
   save_strategy: epoch
