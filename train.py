@@ -173,7 +173,7 @@ def main():
     # Save LoRA Adapters for Best CKPT and tokenizer
     model.save_pretrained(output_dir)
     tokenizer.save_pretrained(output_dir)
-    config.save_pretrained(output_dir)
+    model.base_model.save_pretrained(output_dir)
 
 
 if __name__ == "__main__":

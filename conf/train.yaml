@@ -1,6 +1,6 @@
 path:
   PROJECT_NAME: news-topic-keyphrase-generation-model-dev
-  RUN_ID: v4_run_10
+  RUN_ID: v4_run_11
   TRAIN_DATA_PATH: data/model_dev/model_dev_v4_polyglot_1.3b_train.hf
   EVAL_DATA_PATH: data/model_dev/model_dev_v4_polyglot_1.3b_eval.hf
   MODEL_CHECKPOINT: EleutherAI/polyglot-ko-1.3b # EleutherAI/polyglot-ko-1.3b // EleutherAI/polyglot-ko-5.8b /// paust/pko-t5-base
@@ -10,7 +10,7 @@ path:
 global_args:
   batch_size: 3
   epochs: 20
-  learning_rate: 192e-6 # at batch_size 8 # 3e-6, 12e-6, 48e-6, 96e-6, 192e-6
+  learning_rate: 96e-6 # at batch_size 8 # 3e-6, 12e-6, 48e-6, 96e-6, 192e-6
   early_stopping_patience: 3
   int8: False
 
