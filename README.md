@@ -211,14 +211,13 @@
 - 현재 source와 target의 prefix는 "generate keyphrases:" 및 "keyphrases generated:"
 - 현재 생성 결과에 "keyphrases generated:" 이후 웹사이트 주소가 뜨는 경우가 있음
 
-#### run_9~10
-- source/target prefix를 토크나이저 사전에 추가한 뒤 훈련을 수행해보고자 함 (기존 학습 맥락에서 이탈된 토큰 사용 목적)
-- run_9: 1 에폭 시험 훈련
-- run_10: 20 에폭 훈련
-- 메트릭 테스트는 run_10부터 후처리 로직을 완성하고 진행할 예정
-- EleutherAI/polyglot-ko-1.3b의 경우 batch_size 8을 기준으로 계속 해서 learning rate을 높히는 실험을 진행했음
-  - 현재까지 loss상 overfit이 일어나지 않음
-  - run_10의 경우 18 배치 기준 최대 learning rate를 약 0.00045로 설정 (pretrain시 lr: 0.0002; run_8~9: 약 0.0002)
-- 훈련 결과를 보고 판단해봐야 하나 현재 모델이 수행하는 태스크가 요약에 가까운 만큼 clm인 EleutherAI/polyglot-ko-1.3b보다 seq2seq 모델인 T5가 더 유리하지 않은가, 라는 가설
-  - 현재 pko-t5-base를 finetuning한 모델은 키프레이즈를 충분히 잘 생성하고 있음
-  - 하지만 EleutherAI/polyglot-ko-1.3b 경우 충분히 훈련이 되지 않은 상황일 수도 있으며 run_10의 결과를 보고 한 번의 추가 훈련을 더 진행할 예정
+#### run_9~13
+- source/target prefix를 토크나이저 사전에 추가한 뒤 훈련 (기존 학습 맥락에서 이탈된 토큰 사용 목적)
+- run_13 result
+  - 'rouge1': 50.1822,
+  - 'rouge2': 35.8062,
+  - 'rougeL': 42.1194,
+  - 'rougeLsum': 42.1194,
+  - 'F1@10': 61.0273,
+  - 'jaccard_similarity': 25.3944,
+  - 'gen_len': 64.0
