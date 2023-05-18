@@ -1,6 +1,6 @@
 path:
   PROJECT_NAME: news-topic-keyphrase-generation-model-dev
-  RUN_ID: v4_run_14
+  RUN_ID: v4_run_15
   TRAIN_DATA_PATH: data/model_dev/model_dev_v4_polyglot_1.3b_train.hf
   EVAL_DATA_PATH: data/model_dev/model_dev_v4_polyglot_1.3b_eval.hf
   MODEL_CHECKPOINT: EleutherAI/polyglot-ko-1.3b # EleutherAI/polyglot-ko-1.3b // EleutherAI/polyglot-ko-5.8b /// paust/pko-t5-base

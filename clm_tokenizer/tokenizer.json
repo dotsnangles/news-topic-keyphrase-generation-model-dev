@@ -83,6 +83,15 @@
       "rstrip": false,
       "normalized": true,
       "special": false
+    },
+    {
+      "id": 30005,
+      "content": "[end of generation]",
+      "single_word": false,
+      "lstrip": false,
+      "rstrip": false,
+      "normalized": true,
+      "special": false
     }
   ],
   "normalizer": null,
