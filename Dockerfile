@@ -34,14 +34,23 @@ RUN pyenv install $PYTHON_VERSION && \
 
 
 ### in host terminal
+
 ### run this command where the dockerfile is to build a docker image
 # docker build -t jeonghyeon:1.1.0 .
+
 ### run this command inside your workspace to launch a container
-# docker run -itd --volume=/var/run/docker.sock:/var/run/docker.sock --volume=$(which docker):/usr/bin/docker --gpus=all --volume=$(pwd):/workspace --shm-size=64gb --name=jeonghyeon_1.1.0 jeonghyeon:1.1.0
+# docker run \
+# -itd \
+# --gpus=all \
+# --shm-size=64gb \
+# --volume=/var/run/docker.sock:/var/run/docker.sock \
+# --volume=$(which docker):/usr/bin/docker \
+# --volume=$(pwd):/workspace \
+# --name=jeonghyeon_1.1.0 \
+# jeonghyeon:1.1.0
 
 ### in vsc command palette
 # Dev Containers: Attach to Running Container
 
 ### useful commands
 # docker exec -it jeonghyeon bin/bash
-
