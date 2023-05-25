@@ -45,11 +45,12 @@ TRAIN_DATA_PATH = cfg.path.TRAIN_DATA_PATH
 EVAL_DATA_PATH = cfg.path.EVAL_DATA_PATH
 
 MODEL_CHECKPOINT = cfg.path.MODEL_CHECKPOINT
+model_name = re.sub(r"[/-]", r"_", MODEL_CHECKPOINT).lower()
+
 if cfg.path.TOKENIZER_CHECKPOINT != False:
     TOKENIZER_CHECKPOINT = cfg.path.TOKENIZER_CHECKPOINT
 else:
     TOKENIZER_CHECKPOINT = cfg.path.MODEL_CHECKPOINT
-model_name = re.sub(r"[/-]", r"_", MODEL_CHECKPOINT).lower()
 
 NOTEBOOK_NAME = cfg.path.NOTEBOOK_NAME
 
@@ -150,7 +151,6 @@ def main():
                 early_stopping_patience=cfg.global_args.early_stopping_patience
             )
         ],
-        # compute_metrics=compute_metrics,
     )
 
     if "conditional" in architectures:
@@ -163,10 +163,6 @@ def main():
         data_collator = DataCollatorForLanguageModeling(**collator_args)
         trainer = Trainer(**trainer_args, data_collator=data_collator)
 
-    # model.config.use_cache = (
-    #     False  # silence the warnings. Please re-enable for inference!
-    # )
-
     trainer.train()
     wandb.finish()
 
@@ -174,6 +170,10 @@ def main():
     model.save_pretrained(output_dir)
     tokenizer.save_pretrained(output_dir)
     model.base_model.save_pretrained(output_dir)
+
+    # Merge LoRA Adapters with base model and Save CKPT
+    merged_model = model.merge_and_unload()
+    merged_model.save_pretrained(os.path.join(output_dir, "merged"))
 
 
 if __name__ == "__main__":

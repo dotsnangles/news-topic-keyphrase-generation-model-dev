@@ -3,4 +3,4 @@
 
 # for peft and deepspeed(ZeRO) training
 # accelerate config --config_file ./conf/accelerate.yaml
-# nohup accelerate launch train.py > /dev/null 2>&1&
+# nohup accelerate launch --config_file ./conf/accelerate.yaml train.py > /dev/null 2>&1&
