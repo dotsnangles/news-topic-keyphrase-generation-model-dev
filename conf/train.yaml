@@ -8,7 +8,7 @@ path:
   NOTEBOOK_NAME: ./train.py
 
 global_args:
-  batch_size: 3
+  batch_size: 2
   epochs: 10
   learning_rate: 24e-6 # at batch_size 8 # 3e-6, 12e-6, 24e-6, 48e-6, 96e-6, 192e-6
   early_stopping_patience: 5
@@ -25,6 +25,7 @@ training_args:
   adam_beta2: 0.999
   adam_epsilon: 1e-8
   weight_decay: 0.01
+  gradient_checkpointing: False
   lr_scheduler_type: linear  # 'linear', 'cosine', 'cosine_with_restarts', 'polynomial', 'constant', 'constant_with_warmup'
   warmup_ratio: 0
   save_total_limit: 2 # 1: last ckpt only, 2: best and last
