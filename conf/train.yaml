@@ -1,17 +1,17 @@
 path:
   PROJECT_NAME: news-topic-keyphrase-generation-model-dev
-  RUN_ID: v4_run_19
-  TRAIN_DATA_PATH: data/model_dev/model_dev_v4_polyglot_1.3b_train.hf
-  EVAL_DATA_PATH: data/model_dev/model_dev_v4_polyglot_1.3b_eval.hf
-  MODEL_CHECKPOINT: EleutherAI/polyglot-ko-1.3b # EleutherAI/polyglot-ko-1.3b // EleutherAI/polyglot-ko-5.8b /// paust/pko-t5-base
-  TOKENIZER_CHECKPOINT: clm_tokenizer
+  RUN_ID: v4_run_20
+  TRAIN_DATA_PATH: data/model_dev/model_dev_v4_paust_t5_large_train.hf
+  EVAL_DATA_PATH: data/model_dev/model_dev_v4_paust_t5_large_eval.hf
+  MODEL_CHECKPOINT: paust/pko-t5-large # EleutherAI/polyglot-ko-1.3b // EleutherAI/polyglot-ko-5.8b /// paust/pko-t5-base // paust/pko-t5-large
+  TOKENIZER_CHECKPOINT: False
   NOTEBOOK_NAME: ./train.py
 
 global_args:
-  batch_size: 2
-  epochs: 10
-  learning_rate: 24e-6 # at batch_size 8 # 3e-6, 12e-6, 24e-6, 48e-6, 96e-6, 192e-6
-  early_stopping_patience: 5
+  batch_size: 3
+  epochs: 100
+  learning_rate: 3e-6 # at batch_size 8 # 3e-6, 12e-6, 24e-6, 48e-6, 96e-6, 192e-6 // 24e-6 for polyglot-ko // 3e-6 for paust/pko-t5-large
+  early_stopping_patience: 25
   int8: False
 
 training_args:
