@@ -75,6 +75,16 @@
 - 'jaccard_similarity': 27.6543,
 - 'gen_len': 48.3867
 
+### paust/pko-t5-large
+[추론 결과](results/paust_pko_t5_large_v4_run_20.txt)
+- 'rouge1': 69.9479,
+- 'rouge2': 50.8018,
+- 'rougeL': 57.638,
+- 'rougeLsum': 57.638,
+- 'F1@10': 62.7979,
+- 'jaccard_similarity': 30.7825,
+- 'gen_len': 47.766
+
 ### EleutherAI/polyglot-ko-1.3b
 [추론 결과](results/eleutherai_polyglot_ko_1.3b_v4_run_15.txt)
 - 'rouge1': 67.7194,
